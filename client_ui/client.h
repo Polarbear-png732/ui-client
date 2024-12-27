@@ -17,6 +17,7 @@ extern "C" {
 #endif
 // 协议请求类型
 // 请求码定义
+extern int client_fd;
 #define REQUEST_LOGIN 10001
 #define RESPONSE_LOGIN 10021
 #define REQUEST_LOGOUT 10002
@@ -223,7 +224,6 @@ void send_polling(void *arg);
 extern int client_fd;        // 客户端套接字
 extern pthread_mutex_t lock; // 互斥锁用于控制对共享资源的访问
 
-LoginRequest *build_login_request();
 CreateUser *build_create_user_request();
 FriendRequest *build_friend_request();
 HandleFriendRequest *build_handle_friend_request();
@@ -240,7 +240,7 @@ void file_recv(char *buffer, int file_sock);
 void file_transfer(char *buffer);
 void exit_client();
 int file_sock_init();
-
+void start_client();
 #ifdef __cplusplus
 }
 #endif

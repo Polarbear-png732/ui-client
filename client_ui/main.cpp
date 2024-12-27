@@ -1,6 +1,12 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include <QFile>
+#include <QTimer>
+#include <iostream>
+extern "C" {
+    #include "client.h" // 这是你C语言逻辑代码的头文件
+}
+extern int client_fd;
 
 int main(int argc, char *argv[])
 {
@@ -12,5 +18,9 @@ int main(int argc, char *argv[])
     }
     MainWindow w;
     w.show();
+    QTimer::singleShot(0, []() {
+        start_client(); // 启动C语言客户端
+    });
+    std::cout << "Client FD: " << client_fd << std::endl; // 打印套接字描述符，测试是否能访问
     return a.exec(); // 使用正确的对象名称 a
 }

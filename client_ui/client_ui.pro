@@ -40,7 +40,7 @@ FORMS += \
 
 RESOURCES += \
     resources.qrc \
-    resources.qrc
+
 
 DISTFILES += \
     style.qss

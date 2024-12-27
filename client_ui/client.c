@@ -10,121 +10,121 @@ Polling polling;
 char file_name[256];
 
 
-int main()
+void start_client()
 {
     // 初始化客户端
     init_client();
-    pthread_t send_thread, receive_thread, polling_pthread;
-    // 创建线程发送请求
-    if (pthread_create(&send_thread, NULL, send_request, NULL) != 0)
-    {
-        perror("创建发送线程失败");
-        exit(1);
-    }
+//    pthread_t send_thread, receive_thread, polling_pthread;
+//    // 创建线程发送请求
+//    if (pthread_create(&send_thread, NULL, send_request, NULL) != 0)
+//    {
+//        perror("创建发送线程失败");
+//        exit(1);
+//    }
 
-    // 创建线程接收响应
-    if (pthread_create(&receive_thread, NULL, receive_response, NULL) != 0)
-    {
-        perror("创建接收线程失败");
-        exit(1);
-    }
-    /*
-    sleep(20);                                //必须在登录之后才发送，否则服务器发生段错误
-    if (pthread_create(&polling_pthread, NULL,send_polling, NULL) != 0) {
-        perror("创建接收线程失败");
-        exit(1);
-    }*/
-    // 等待线程结束
-    pthread_join(send_thread, NULL);
-    pthread_join(receive_thread, NULL);
-    // 关闭套接字
-    close(client_fd);
+//    // 创建线程接收响应
+//    if (pthread_create(&receive_thread, NULL, receive_response, NULL) != 0)
+//    {
+//        perror("创建接收线程失败");
+//        exit(1);
+//    }
+//    /*
+//    sleep(20);                                //必须在登录之后才发送，否则服务器发生段错误
+//    if (pthread_create(&polling_pthread, NULL,send_polling, NULL) != 0) {
+//        perror("创建接收线程失败");
+//        exit(1);
+//    }*/
+//    // 等待线程结束
+//    pthread_join(send_thread, NULL);
+//    pthread_join(receive_thread, NULL);
+//    // 关闭套接字
+//    close(client_fd);
 
     return 0;
 }
 
-// 发送请求函数
-void *send_request(void *arg)
-{
+//// 发送请求函数
+//void *send_request(void *arg)
+//{
 
-    int action;
-    printf("1.登录 2.创建用户3.添加好友或删除4.处理好友请求\n5.发送私聊消息6.创建群或者删除7.邀请好友入群或者踢人\n8.处理群聊邀请.9.退出10.发送群聊消息11发送文件给好友\n12.修改群名13.好友别名");
-    pthread_detach(pthread_self());
-    while (1)
-    {
+//    int action;
+//    printf("1.登录 2.创建用户3.添加好友或删除4.处理好友请求\n5.发送私聊消息6.创建群或者删除7.邀请好友入群或者踢人\n8.处理群聊邀请.9.退出10.发送群聊消息11发送文件给好友\n12.修改群名13.好友别名");
+//    pthread_detach(pthread_self());
+//    while (1)
+//    {
 
-        scanf("%d", &action);
-        void *request = NULL;
-        unsigned int len = 0;
+//        scanf("%d", &action);
+//        void *request = NULL;
+//        unsigned int len = 0;
 
-        switch (action)
-        {
-        case 1:
-            request = build_login_request();
-            len = sizeof(LoginRequest);
-            break;
-        case 2:
-            request = build_create_user_request();
-            len = sizeof(CreateUser);
-            break;
-        case 3:
-            request = build_friend_request();
-            len = sizeof(FriendRequest);
-            break;
-        case 4:
-            request = build_handle_friend_request();
-            len = sizeof(HandleFriendRequest);
-            break;
-        case 5:
-            request = build_private_message_request();
-            len = sizeof(PrivateMessage);
-            break;
-        case 6:
-            request = build_group_request();
-            len = sizeof(GroupCreateRequest);
-            break;
-        case 7:
-            request = build_invite_request();
-            len = sizeof(InviteRequest);
-            break;
-        case 8:
-            request = build_handle_group_request();
-            len = sizeof(InviteRequest);
-            break;
-        case 9:
-            exit_client();
-            break;
-        case 10:
-            request = build_group_message();
-            len = sizeof(GroupMessage);
-            break;
-        case 11:
-            request = build_file_transfer_req();
-            len = sizeof(FileTransferRequest);
-            break;
-        case 12:
-            request = build_group_name_reset();
-            len = sizeof(GroupNameRestet);
-            break;
-        case 13:
-            request = build_friend_remark_request();
-            len = sizeof(FriendRemarkRequest);
-            break;
-        default:
-            printf("无效的操作\n");
-            continue;
-        }
+//        switch (action)
+//        {
+//        case 1:
+//            request = build_login_request();
+//            len = sizeof(LoginRequest);
+//            break;
+//        case 2:
+//            request = build_create_user_request();
+//            len = sizeof(CreateUser);
+//            break;
+//        case 3:
+//            request = build_friend_request();
+//            len = sizeof(FriendRequest);
+//            break;
+//        case 4:
+//            request = build_handle_friend_request();
+//            len = sizeof(HandleFriendRequest);
+//            break;
+//        case 5:
+//            request = build_private_message_request();
+//            len = sizeof(PrivateMessage);
+//            break;
+//        case 6:
+//            request = build_group_request();
+//            len = sizeof(GroupCreateRequest);
+//            break;
+//        case 7:
+//            request = build_invite_request();
+//            len = sizeof(InviteRequest);
+//            break;
+//        case 8:
+//            request = build_handle_group_request();
+//            len = sizeof(InviteRequest);
+//            break;
+//        case 9:
+//            exit_client();
+//            break;
+//        case 10:
+//            request = build_group_message();
+//            len = sizeof(GroupMessage);
+//            break;
+//        case 11:
+//            request = build_file_transfer_req();
+//            len = sizeof(FileTransferRequest);
+//            break;
+//        case 12:
+//            request = build_group_name_reset();
+//            len = sizeof(GroupNameRestet);
+//            break;
+//        case 13:
+//            request = build_friend_remark_request();
+//            len = sizeof(FriendRemarkRequest);
+//            break;
+//        default:
+//            printf("无效的操作\n");
+//            continue;
+//        }
 
-        if (request != NULL)
-        {
-            pthread_mutex_lock(&lock);
-            printf("Sending request: length=%u, request_code=%u\n", ntohl(*(unsigned int *)request), ntohl(*(unsigned int *)(request + sizeof(unsigned int))));
-            send(client_fd, request, len, 0);
-            pthread_mutex_unlock(&lock);
-            free(request); // 释放动态分配的内存
-        }
-    }
-}
+//        if (request != NULL)
+//        {
+//            pthread_mutex_lock(&lock);
+//            printf("Sending request: length=%u, request_code=%u\n", ntohl(*(unsigned int *)request), ntohl(*(unsigned int *)(request + sizeof(unsigned int))));
+//            send(client_fd, request, len, 0);
+//            pthread_mutex_unlock(&lock);
+//            free(request); // 释放动态分配的内存
+//        }
+//    }
+//}
 
 // 接收响应函数
 void *receive_response(void *arg)
@@ -202,22 +202,30 @@ void exit_client()
     kill(pid, SIGKILL);
 }
 // 构造请求函数实现
-LoginRequest *build_login_request()
-{
-    LoginRequest *request = malloc(sizeof(LoginRequest));
-    if (!request)
-    {
-        perror("内存分配失败");
-        exit(1);
-    }
-    request->request_code = htonl(REQUEST_LOGIN);
-    printf("请输入用户名: ");
-    scanf("%s", request->username);
-    printf("请输入密码: ");
-    scanf("%s", request->password);
-    request->length = htonl(sizeof(LoginRequest));
-    return request;
-}
+//LoginRequest *build_login_request(const QString &username, const QString &password)
+//{
+//    LoginRequest *request = malloc(sizeof(LoginRequest));
+//    if (!request)
+//    {
+//        perror("内存分配失败");
+//        exit(1);
+//    }
+//    request->request_code = htonl(REQUEST_LOGIN);
+
+//    // 将 QString 转换为 C 字符串并复制到结构体中
+//    strncpy(request->username, username.toStdString().c_str(), sizeof(request->username) - 1);
+//    request->username[sizeof(request->username) - 1] = '\0';  // 确保字符串以 null 结尾
+
+//    strncpy(request->password, password.toStdString().c_str(), sizeof(request->password) - 1);
+//    request->password[sizeof(request->password) - 1] = '\0';  // 确保字符串以 null 结尾
+
+//    request->length = htonl(sizeof(LoginRequest));
+
+//    // 发送请求
+//    send(client_fd, request, sizeof(LoginRequest), 0);
+
+//    return request;
+//}
 
 CreateUser *build_create_user_request()
 {
