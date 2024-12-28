@@ -76,7 +76,7 @@
      <string>密码</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="loginButton_2">
+   <widget class="QPushButton" name="registerButton">
     <property name="geometry">
      <rect>
       <x>190</x>

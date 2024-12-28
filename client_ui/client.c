@@ -14,29 +14,15 @@ void start_client()
 {
     // 初始化客户端
     init_client();
-//    pthread_t send_thread, receive_thread, polling_pthread;
-//    // 创建线程发送请求
-//    if (pthread_create(&send_thread, NULL, send_request, NULL) != 0)
-//    {
-//        perror("创建发送线程失败");
-//        exit(1);
-//    }
+    pthread_t receive_thread;
 
-//    // 创建线程接收响应
-//    if (pthread_create(&receive_thread, NULL, receive_response, NULL) != 0)
-//    {
-//        perror("创建接收线程失败");
-//        exit(1);
-//    }
-//    /*
-//    sleep(20);                                //必须在登录之后才发送，否则服务器发生段错误
-//    if (pthread_create(&polling_pthread, NULL,send_polling, NULL) != 0) {
-//        perror("创建接收线程失败");
-//        exit(1);
-//    }*/
-//    // 等待线程结束
-//    pthread_join(send_thread, NULL);
-//    pthread_join(receive_thread, NULL);
+    // 创建线程接收响应
+    if (pthread_create(&receive_thread, NULL, receive_response, NULL) != 0)
+    {
+        perror("创建接收线程失败");
+        exit(1);
+    }
+    pthread_join(receive_thread, NULL);
 //    // 关闭套接字
 //    close(client_fd);
 

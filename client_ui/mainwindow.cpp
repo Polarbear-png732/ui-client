@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QMessageBox>
+#include "registerwindow.h"
+
+
+
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
@@ -35,9 +39,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
-    // 登录按钮点击事件
     connect(ui->loginButton, &QPushButton::clicked, this, &MainWindow::onLoginClicked);
+    connect(ui->registerButton, &QPushButton::clicked, this, &MainWindow::onRegisterClicked);
 }
 
 MainWindow::~MainWindow()
@@ -59,3 +62,11 @@ void MainWindow::onLoginClicked()
 //    }
 }
 
+void MainWindow::onRegisterClicked()
+{
+    this->hide(); // 隐藏登录窗口
+
+    registerwindow *regWindow = new registerwindow(this); // 设置父窗口为 MainWindow
+    regWindow->setAttribute(Qt::WA_DeleteOnClose); // 窗口关闭时自动删除
+    regWindow->show(); // 显示注册窗口
+}

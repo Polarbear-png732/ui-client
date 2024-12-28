@@ -17,7 +17,7 @@ public:
 
 private slots:
     void onLoginClicked();
-
+    void onRegisterClicked();
 private:
     Ui::MainWindow *ui;
 };

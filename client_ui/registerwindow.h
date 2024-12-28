@@ -3,15 +3,26 @@
 
 #include <QMainWindow>
 
-class RegisterWindow : public QMainWindow
+
+
+namespace Ui {
+    class registerwindow;
+}
+
+class registerwindow : public QMainWindow  // 改为继承 QMainWindow
 {
     Q_OBJECT
+
 public:
-    explicit RegisterWindow(QWidget *parent = nullptr);
+    explicit registerwindow(QWidget *parent = nullptr);
+    ~registerwindow();
+protected:
+    void closeEvent(QCloseEvent *event) override;
+private slots:
+    void register_2_clicked();
 
-signals:
-
-public slots:
+private:
+    Ui::registerwindow *ui;
 };
 
 #endif // REGISTERWINDOW_H
