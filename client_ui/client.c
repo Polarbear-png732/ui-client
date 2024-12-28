@@ -6,26 +6,13 @@
 int client_fd;                                    // 客户端套接字
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; // 互斥锁
 char session_token[64];                           // 会话标识符
-Polling polling;
+
 char file_name[256];
 
 
 void start_client()
 {
-    // 初始化客户端
     init_client();
-    pthread_t receive_thread;
-
-    // 创建线程接收响应
-    if (pthread_create(&receive_thread, NULL, receive_response, NULL) != 0)
-    {
-        perror("创建接收线程失败");
-        exit(1);
-    }
-    pthread_join(receive_thread, NULL);
-//    // 关闭套接字
-//    close(client_fd);
-
     return 0;
 }
 
@@ -113,65 +100,7 @@ void start_client()
 //}
 
 // 接收响应函数
-void *receive_response(void *arg)
-{
 
-    char buffer[BUFSIZE];
-    unsigned int req_length;
-    unsigned int size_len = sizeof(req_length);
-    while (1)
-    {
-        if (recv_full(client_fd, buffer, size_len) == 0)
-        {
-            break;
-        } // 先接收报文长度
-        req_length = ntohl(*(unsigned int *)buffer);                    // 将接收到的报文长度从网络字节序转换为主机字节序
-        recv_full(client_fd, buffer + size_len, req_length - size_len); // 接收剩余的数据
-        unsigned int response_code = ntohl(*(unsigned int *)(buffer + size_len));
-
-        switch (response_code)
-        {
-        case RESPONSE_LOGIN:
-        {
-            LoginResponse *response = (LoginResponse *)buffer;
-            printf("Login response:\n");
-            printf("Status Code: %u\n", ntohl(response->status_code));
-            strncpy(session_token, response->session_token, sizeof(session_token) - 1);
-            session_token[sizeof(session_token) - 1] = '\0';
-            printf("%s\n", session_token);
-            break;
-        }
-        case SIMPLE_RESPONSE:
-        {
-            SimpleResponse *resp = (SimpleResponse *)buffer;
-            printf("Server Response: %u\n", ntohl(resp->status_code));
-            break;
-        }
-        case RESPONSE_FILE_ACK:
-        {
-            printf("第%u块，确认开始传输\n", *(unsigned *)(buffer + 8)); // 检查是否进入该 case
-            file_transfer(buffer);
-            break;
-        }
-        case REQUEST_FILE_TRANSFER:
-        {
-            printf("开始接收文件！ \n");
-            int file_sock = file_sock_init(); // 收到传输请求再调用函数创建套接字，保证服务器accept到正确的套接字上
-            file_recv(buffer, file_sock);
-            close(file_sock);
-            break;
-        }
-        default:
-        {
-            FeedbackMessage *message = (FeedbackMessage *)buffer;
-            printf("%s\n", message->message);
-            break;
-        }
-        }
-    }
-    pthread_detach(pthread_self());
-    return NULL;
-}
 
 void exit_client()
 {

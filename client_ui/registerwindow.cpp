@@ -17,12 +17,7 @@ registerwindow::~registerwindow()
     delete ui;
 }
 
-//void registerwindow::onClose()
-//{
-//    // 当注册窗口关闭时，显示登录窗口
-//    MainWindow *mainWindow = new MainWindow();
-//    mainWindow->show();
-//}
+
 
 CreateUser *build_create_user_request(const QString &username, const QString &password)
 {
@@ -59,3 +54,4 @@ void registerwindow::register_2_clicked()
     build_create_user_request(username,password);
 
 }
+

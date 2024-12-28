@@ -12,12 +12,16 @@
 #include <signal.h>
 
 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 // 协议请求类型
 // 请求码定义
 extern int client_fd;
+extern char session_token[64];
+
+
 #define REQUEST_LOGIN 10001
 #define RESPONSE_LOGIN 10021
 #define REQUEST_LOGOUT 10002
@@ -220,8 +224,9 @@ void *receive_response(void *arg);
 void init_client();
 int recv_full(int sock, void *buf, size_t len);
 void send_polling(void *arg);
+
 // 客户端全局变量
-extern int client_fd;        // 客户端套接字
+
 extern pthread_mutex_t lock; // 互斥锁用于控制对共享资源的访问
 
 CreateUser *build_create_user_request();
@@ -241,6 +246,7 @@ void file_transfer(char *buffer);
 void exit_client();
 int file_sock_init();
 void start_client();
+
 #ifdef __cplusplus
 }
 #endif

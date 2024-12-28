@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = client_ui
 TEMPLATE = app
-LIBS += -lpthread
+CONFIG += c++11
 # The following define makes your compiler emit warnings if you use
 # any feature of Qt which has been marked as deprecated (the exact warnings
 # depend on your compiler). Please consult the documentation of the
@@ -27,16 +27,21 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     client.c \
-    registerwindow.cpp
+    registerwindow.cpp \
+    responsethread.cpp \
+    logged.cpp
 
 HEADERS += \
         mainwindow.h \
     client.h \
-    registerwindow.h
+    registerwindow.h \
+    responsethread.h \
+    logged.h
 
 FORMS += \
         mainwindow.ui \
-    registerwindow.ui
+    registerwindow.ui \
+    logged.ui
 
 RESOURCES += \
     resources.qrc \
