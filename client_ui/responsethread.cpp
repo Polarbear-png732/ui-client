@@ -15,10 +15,10 @@ ResponseThread::~ResponseThread()
 
 void ResponseThread::run()
 {
-    qDebug() << "Thread started";
+    qDebug() << "Response Thread started";
     connect(&responseHandler, &ResponseHandler::messageReceived, this, &ResponseThread::responseReceived, Qt::QueuedConnection);
     // 调用 C 函数，传递 responseHandler 的指针，需要进行类型转换
     receive_response(static_cast<void*>(&responseHandler));
 
-    qDebug() << "Thread finished";
+    qDebug() << "Response Thread finished";
 }

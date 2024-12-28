@@ -20,7 +20,8 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 private slots:
     void register_2_clicked();
-
+signals:
+    void requestToSend(void *req); // 定义发送请求的信号
 private:
     Ui::registerwindow *ui;
 };

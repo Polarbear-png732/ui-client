@@ -31,6 +31,7 @@ SOURCES += \
     responsethread.cpp \
     logged.cpp \
     frienditem.cpp \
+    sendthread.cpp
 
 
 HEADERS += \
@@ -40,6 +41,7 @@ HEADERS += \
     responsethread.h \
     logged.h \
     frienditem.h \
+    sendthread.h
 
 
 FORMS += \

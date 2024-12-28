@@ -5,6 +5,9 @@
 #include <QTimer>
 #include <QDebug>
 #include <QString>
+#include "sendthread.h"
+#include "logged.h"
+
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
@@ -32,6 +35,11 @@ MainWindow::~MainWindow()
         responseThread->quit();               // 退出线程事件循环
         responseThread->wait();               // 等待线程退出
     }
+    if (sendThread) {
+        sendThread->stop(); // 自定义的停止方法，设置标志并唤醒线程
+        sendThread->wait(); // 等待线程安全退出
+        delete sendThread;
+    }
     delete ui;
 }
 
@@ -40,57 +48,6 @@ void MainWindow::onLoginClicked()
     QString username = ui->usernameLineEdit->text();
     QString password = ui->passwordLineEdit->text();
 
-    build_login_request(username, password);
-    // 简单的用户名密码校验
-//    if (username == "admin" && password == "1234") {
-//        QMessageBox::information(this, "Login Success", "Welcome!");
-//    } else {
-//        QMessageBox::warning(this, "Login Failed", "Incorrect username or password.");
-//    }
-}
-
-void MainWindow::onRegisterClicked()
-{
-    this->hide(); // 隐藏登录窗口
-    QTimer::singleShot(0, this, &MainWindow::startResponseThread);
-    registerwindow *regWindow = new registerwindow(this); // 设置父窗口为 MainWindow
-    regWindow->setAttribute(Qt::WA_DeleteOnClose); // 窗口关闭时自动删除
-    regWindow->show(); // 显示注册窗口
-}
-
-void MainWindow::startResponseThread()
-{
-    // 在这里启动响应线程
-    responseThread = new ResponseThread(this);
-
-    // 将线程信号与槽连接
-    connect(responseThread, &ResponseThread::responseReceived, this, &MainWindow::handleResponse);
-
-    // 线程结束时自动删除线程对象
-    connect(responseThread, &ResponseThread::finished, responseThread, &QObject::deleteLater);
-
-    responseThread->start();
-    qDebug() << "Response thread started!";
-}
-void MainWindow::handleResponse(const QVariant &data)
-{
-
-    if (data.canConvert<QString>()) {
-        qDebug() << "String message:" << data.toString();
-    } else if (data.canConvert<int>()) {
-        qDebug() << "Integer message:" << data.toInt();
-    } else {
-        qDebug() << "Other data type received";
-    }
-    QMessageBox::information(this, "反馈", "未知数据类型");
-
-//    ui->statusBar->showMessage(message, 5000);
-}
-
-
-
-void *build_login_request(const QString &username, const QString &password)
-{
     LoginRequest *request = (LoginRequest *)malloc(sizeof(LoginRequest));
     if (!request)
     {
@@ -107,12 +64,69 @@ void *build_login_request(const QString &username, const QString &password)
     request->password[sizeof(request->password) - 1] = '\0';  // 确保字符串以 null 结尾
 
     request->length = htonl(sizeof(LoginRequest));
-
-    // 发送请求
-    send(client_fd, request, sizeof(LoginRequest), 0);
-    free(request);
-
+    emit requestToSend(request);
 }
+
+void MainWindow::onRegisterClicked()
+{
+    this->hide(); // 隐藏登录窗口
+    QTimer::singleShot(0, this, &MainWindow::startResponseThread);
+    registerwindow *regWindow = new registerwindow(this); // 设置父窗口为 MainWindow
+    connect(regWindow, &registerwindow::requestToSend, sendThread, &SendThread::sendRequest);//将请求发到发送线程进行发送
+    regWindow->setAttribute(Qt::WA_DeleteOnClose); // 窗口关闭时自动删除
+    regWindow->show(); // 显示注册窗口
+}
+
+void MainWindow::startResponseThread()
+{
+
+
+    sendThread = new SendThread(this); // 初始化发送线程
+    connect(sendThread, &SendThread::finished, sendThread, &QObject::deleteLater);
+    sendThread->start();
+    connect(this, &MainWindow::requestToSend, sendThread, &SendThread::sendRequest);
+
+    responseThread = new ResponseThread(this);
+    connect(responseThread, &ResponseThread::responseReceived, this, &MainWindow::handleResponse);
+    connect(responseThread, &ResponseThread::finished, responseThread, &QObject::deleteLater);
+    responseThread->start();
+
+    qDebug() << "Response thread and Send thread started!";
+}
+
+
+void MainWindow::handleResponse(const QVariant &data)
+{
+    QString message; // 用于存储将要显示的消息
+
+    if (data.canConvert<QString>()) {
+        QString dataString = data.toString(); // 转换并保存字符串
+        qDebug() << "String message:" << dataString;
+        message = dataString;
+    } else if (data.canConvert<unsigned int>()) {
+        unsigned int dataUInt = data.toUInt();
+        qDebug() << "Integer message:" << dataUInt;  //登录成功，跳转新窗口
+        if(dataUInt==10021){
+            this->hide(); // 隐藏登录窗口
+            logged *friendlist = new logged(this, this);
+            friendlist->setAttribute(Qt::WA_DeleteOnClose);
+            friendlist->show();
+        }
+        message = QString::number(dataUInt); // 将整数转换为字符串并赋值给 message
+    } else {
+        qDebug() << "Other data type received";
+        message = "未知数据类型"; // 为其他类型设置消息
+    }
+
+    // 显示消息框
+    QMessageBox::information(this, "反馈", message);
+
+    // 如果您想要在状态栏中显示消息，请取消注释以下代码
+    // ui->statusBar->showMessage(message, 5000);
+}
+
+
+
 void *receive_response(void *arg)
 {
     ResponseHandler *handler = (ResponseHandler *)arg;
@@ -134,14 +148,15 @@ void *receive_response(void *arg)
         case RESPONSE_LOGIN:
         {
             LoginResponse *response = (LoginResponse *)buffer;
+            unsigned int req_code=ntohl(response->request_code);
             printf("Login response:\n");
             printf("Status Code: %u\n", ntohl(response->status_code));
             strncpy(session_token, response->session_token, sizeof(session_token) - 1);
             session_token[sizeof(session_token) - 1] = '\0';
             printf("%s\n", session_token);
             QString message = QString::fromUtf8(response->session_token);
-            // 发射信号，将消息传递到主线程
-            handler->emitMessage(message);
+
+            handler->emitMessage(req_code);
             break;
         }
         case SIMPLE_RESPONSE:

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "responsethread.h"
+#include "sendthread.h"
 namespace Ui {
 class MainWindow;
 }
@@ -14,15 +15,17 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
+signals:
+    void requestToSend(void *req); // 定义发送请求的信号
 private slots:
     void onLoginClicked();
     void onRegisterClicked();
     void handleResponse(const QVariant &data);
-    void startResponseThread();  // 延迟启动线程
+    void startResponseThread();
 private:
     Ui::MainWindow *ui;
-    ResponseThread *responseThread; // 添加线程对象
+    ResponseThread *responseThread;
+     SendThread *sendThread; // 发送线程作为成员变量
 };
 
 
