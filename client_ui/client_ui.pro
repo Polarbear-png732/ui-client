@@ -29,23 +29,29 @@ SOURCES += \
     client.c \
     registerwindow.cpp \
     responsethread.cpp \
-    logged.cpp
+    logged.cpp \
+    frienditem.cpp \
+
 
 HEADERS += \
         mainwindow.h \
     client.h \
     registerwindow.h \
     responsethread.h \
-    logged.h
+    logged.h \
+    frienditem.h \
+
 
 FORMS += \
         mainwindow.ui \
     registerwindow.ui \
-    logged.ui
+    logged.ui \
+    frienditem.ui
 
 RESOURCES += \
     resources.qrc \
 
 
 DISTFILES += \
-    style.qss
+    style.qss \
+    img/poalrbear.png

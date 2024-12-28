@@ -2,4 +2,11 @@
     <qresource prefix="/QSS">
         <file>style.qss</file>
     </qresource>
+    <qresource prefix="/image"/>
+    <qresource prefix="/images"/>
+    <qresource prefix="/images" lang="00"/>
+    <qresource prefix="/image" lang="0"/>
+    <qresource prefix="/image" lang="000">
+        <file>poalrbear.png</file>
+    </qresource>
 </RCC>
