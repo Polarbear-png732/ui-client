@@ -4,12 +4,12 @@
 #include "registerwindow.h"
 #include <QTimer>
 #include <QDebug>
-
+#include <QString>
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
 void *receive_response(void *arg);
-LoginRequest *build_login_request(const QString &username, const QString &password);
+void *build_login_request(const QString &username, const QString &password);
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -21,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     // 连接按钮的槽函数
     connect(ui->loginButton, &QPushButton::clicked, this, &MainWindow::onLoginClicked);
     connect(ui->registerButton, &QPushButton::clicked, this, &MainWindow::onRegisterClicked);
-
+    QTimer::singleShot(0, this, &MainWindow::startResponseThread);
 }
 
 
@@ -39,7 +39,7 @@ void MainWindow::onLoginClicked()
 {
     QString username = ui->usernameLineEdit->text();
     QString password = ui->passwordLineEdit->text();
-    QTimer::singleShot(0, this, &MainWindow::startResponseThread);
+
     build_login_request(username, password);
     // 简单的用户名密码校验
 //    if (username == "admin" && password == "1234") {
@@ -52,7 +52,7 @@ void MainWindow::onLoginClicked()
 void MainWindow::onRegisterClicked()
 {
     this->hide(); // 隐藏登录窗口
-
+    QTimer::singleShot(0, this, &MainWindow::startResponseThread);
     registerwindow *regWindow = new registerwindow(this); // 设置父窗口为 MainWindow
     regWindow->setAttribute(Qt::WA_DeleteOnClose); // 窗口关闭时自动删除
     regWindow->show(); // 显示注册窗口
@@ -69,21 +69,27 @@ void MainWindow::startResponseThread()
     // 线程结束时自动删除线程对象
     connect(responseThread, &ResponseThread::finished, responseThread, &QObject::deleteLater);
 
-    // 启动线程
     responseThread->start();
     qDebug() << "Response thread started!";
 }
-void MainWindow::handleResponse(const QString &message)
+void MainWindow::handleResponse(const QVariant &data)
 {
-    qDebug() << "Received message: " << message;
 
-    // 在状态栏中显示消息，持续 5 秒
-    ui->statusBar->showMessage(message, 5000);
+    if (data.canConvert<QString>()) {
+        qDebug() << "String message:" << data.toString();
+    } else if (data.canConvert<int>()) {
+        qDebug() << "Integer message:" << data.toInt();
+    } else {
+        qDebug() << "Other data type received";
+    }
+    QMessageBox::information(this, "反馈", "未知数据类型");
+
+//    ui->statusBar->showMessage(message, 5000);
 }
 
 
 
-LoginRequest *build_login_request(const QString &username, const QString &password)
+void *build_login_request(const QString &username, const QString &password)
 {
     LoginRequest *request = (LoginRequest *)malloc(sizeof(LoginRequest));
     if (!request)
@@ -104,8 +110,8 @@ LoginRequest *build_login_request(const QString &username, const QString &passwo
 
     // 发送请求
     send(client_fd, request, sizeof(LoginRequest), 0);
+    free(request);
 
-    return request;
 }
 void *receive_response(void *arg)
 {
@@ -141,7 +147,15 @@ void *receive_response(void *arg)
         case SIMPLE_RESPONSE:
         {
             SimpleResponse *resp = (SimpleResponse *)buffer;
-            printf("Server Response: %u\n", ntohl(resp->status_code));
+            int status=ntohl(resp->status_code);
+            QString message;
+                    if (status == 200) {
+                        message = "操作成功";
+                    } else {
+                        message = "操作失败";
+                    }
+             handler->emitMessage(message);
+
             break;
         }
         case RESPONSE_FILE_ACK:
@@ -161,7 +175,10 @@ void *receive_response(void *arg)
         default:
         {
             FeedbackMessage *message = (FeedbackMessage *)buffer;
-            printf("%s\n", message->message);
+
+            QString message_1 = QString::fromUtf8(message->message);
+            // 发射信号，将消息传递到主线程
+            handler->emitMessage(message_1);
             break;
         }
         }

@@ -16,13 +16,11 @@ public:
     explicit ResponseHandler(QObject *parent = nullptr) : QObject(parent) {}
 
 signals:
-    // 信号：将消息传递到主线程
-    void messageReceived(const QString &message);
+    void messageReceived(const QVariant &data);
 
 public:
-    // 调用此方法以发射信号
-    void emitMessage(const QString &message) {
-        emit messageReceived(message);
+    void emitMessage(const QVariant &data) {
+        emit messageReceived(data);
     }
 };
 
@@ -39,7 +37,7 @@ protected:
     void run() override;
 
 signals:
-    void responseReceived(const QString &message); // 定义信号以通知主线程
+    void responseReceived(const QVariant &data); // 定义信号以通知主线程
 private:
     ResponseHandler responseHandler;  // 消息处理类实例
 };

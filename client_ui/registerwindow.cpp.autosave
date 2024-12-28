@@ -18,7 +18,6 @@ registerwindow::~registerwindow()
 }
 
 
-
 void build_create_user_request(const QString &username, const QString &password)
 {
     CreateUser* request =(CreateUser*)malloc(sizeof(CreateUser));

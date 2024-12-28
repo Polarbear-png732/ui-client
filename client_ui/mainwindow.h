@@ -18,7 +18,7 @@ public:
 private slots:
     void onLoginClicked();
     void onRegisterClicked();
-    void handleResponse(const QString &message);
+    void handleResponse(const QVariant &data);
     void startResponseThread();  // 延迟启动线程
 private:
     Ui::MainWindow *ui;
