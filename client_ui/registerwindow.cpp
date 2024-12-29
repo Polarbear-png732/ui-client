@@ -4,6 +4,9 @@
 #include <QCloseEvent>
 #include "client.h"
 #include "sendthread.h"
+extern ResponseThread* responseThread;
+extern SendThread* sendThread;
+extern int client_fd;
 registerwindow::registerwindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::registerwindow)

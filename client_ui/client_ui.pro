@@ -41,7 +41,8 @@ HEADERS += \
     responsethread.h \
     logged.h \
     frienditem.h \
-    sendthread.h
+    sendthread.h \
+    messagedispatcher.h
 
 
 FORMS += \

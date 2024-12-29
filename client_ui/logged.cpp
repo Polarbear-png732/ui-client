@@ -3,8 +3,12 @@
 #include <QListWidget>
 #include <QCloseEvent>
 #include "frienditem.h"
+#include "responsethread.h"
+#include "sendthread.h"
+extern ResponseThread* responseThread;
+extern SendThread* sendThread;
 
-logged::logged(QWidget *parent, QWidget *loginWindow) :
+logged::logged(QWidget *parent, QMainWindow *loginWindow) :
     QMainWindow(parent),
     ui(new Ui::logged),
     loginWindow(loginWindow) // 保存登录窗口指针

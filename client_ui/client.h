@@ -21,7 +21,9 @@ extern "C" {
 extern int client_fd;
 extern char session_token[64];
 
-
+#define SERVER_IP "127.0.0.1" // 服务器IP地址
+#define SERVER_PORT 10005     // 服务器端口
+#define FILE_TRANSFER_SERVER_PORT 10007
 #define REQUEST_LOGIN 10001
 #define RESPONSE_LOGIN 10021
 #define REQUEST_LOGOUT 10002
@@ -219,8 +221,8 @@ typedef struct
     char token[64];            // 用于后续传输
 } Polling;
 // 线程函数声明
-void *send_request(void *arg);
-void *receive_response(void *arg);
+
+void *receive_response();
 void init_client();
 int recv_full(int sock, void *buf, size_t len);
 void send_polling(void *arg);

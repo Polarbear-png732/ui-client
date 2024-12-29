@@ -1,8 +1,6 @@
 #include "client.h"
 
-#define SERVER_IP "127.0.0.1" // 服务器IP地址
-#define SERVER_PORT 10005     // 服务器端口
-#define FILE_TRANSFER_SERVER_PORT 10007
+
 int client_fd;                                    // 客户端套接字
 pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER; // 互斥锁
 char session_token[64];                           // 会话标识符
@@ -15,92 +13,6 @@ void start_client()
     init_client();
     return 0;
 }
-
-//// 发送请求函数
-//void *send_request(void *arg)
-//{
-
-//    int action;
-//    printf("1.登录 2.创建用户3.添加好友或删除4.处理好友请求\n5.发送私聊消息6.创建群或者删除7.邀请好友入群或者踢人\n8.处理群聊邀请.9.退出10.发送群聊消息11发送文件给好友\n12.修改群名13.好友别名");
-//    pthread_detach(pthread_self());
-//    while (1)
-//    {
-
-//        scanf("%d", &action);
-//        void *request = NULL;
-//        unsigned int len = 0;
-
-//        switch (action)
-//        {
-//        case 1:
-//            request = build_login_request();
-//            len = sizeof(LoginRequest);
-//            break;
-//        case 2:
-//            request = build_create_user_request();
-//            len = sizeof(CreateUser);
-//            break;
-//        case 3:
-//            request = build_friend_request();
-//            len = sizeof(FriendRequest);
-//            break;
-//        case 4:
-//            request = build_handle_friend_request();
-//            len = sizeof(HandleFriendRequest);
-//            break;
-//        case 5:
-//            request = build_private_message_request();
-//            len = sizeof(PrivateMessage);
-//            break;
-//        case 6:
-//            request = build_group_request();
-//            len = sizeof(GroupCreateRequest);
-//            break;
-//        case 7:
-//            request = build_invite_request();
-//            len = sizeof(InviteRequest);
-//            break;
-//        case 8:
-//            request = build_handle_group_request();
-//            len = sizeof(InviteRequest);
-//            break;
-//        case 9:
-//            exit_client();
-//            break;
-//        case 10:
-//            request = build_group_message();
-//            len = sizeof(GroupMessage);
-//            break;
-//        case 11:
-//            request = build_file_transfer_req();
-//            len = sizeof(FileTransferRequest);
-//            break;
-//        case 12:
-//            request = build_group_name_reset();
-//            len = sizeof(GroupNameRestet);
-//            break;
-//        case 13:
-//            request = build_friend_remark_request();
-//            len = sizeof(FriendRemarkRequest);
-//            break;
-//        default:
-//            printf("无效的操作\n");
-//            continue;
-//        }
-
-//        if (request != NULL)
-//        {
-//            pthread_mutex_lock(&lock);
-//            printf("Sending request: length=%u, request_code=%u\n", ntohl(*(unsigned int *)request), ntohl(*(unsigned int *)(request + sizeof(unsigned int))));
-//            send(client_fd, request, len, 0);
-//            pthread_mutex_unlock(&lock);
-//            free(request); // 释放动态分配的内存
-//        }
-//    }
-//}
-
-// 接收响应函数
-
 
 void exit_client()
 {
@@ -116,31 +28,6 @@ void exit_client()
     pid_t pid = getpid();
     kill(pid, SIGKILL);
 }
-// 构造请求函数实现
-//LoginRequest *build_login_request(const QString &username, const QString &password)
-//{
-//    LoginRequest *request = malloc(sizeof(LoginRequest));
-//    if (!request)
-//    {
-//        perror("内存分配失败");
-//        exit(1);
-//    }
-//    request->request_code = htonl(REQUEST_LOGIN);
-
-//    // 将 QString 转换为 C 字符串并复制到结构体中
-//    strncpy(request->username, username.toStdString().c_str(), sizeof(request->username) - 1);
-//    request->username[sizeof(request->username) - 1] = '\0';  // 确保字符串以 null 结尾
-
-//    strncpy(request->password, password.toStdString().c_str(), sizeof(request->password) - 1);
-//    request->password[sizeof(request->password) - 1] = '\0';  // 确保字符串以 null 结尾
-
-//    request->length = htonl(sizeof(LoginRequest));
-
-//    // 发送请求
-//    send(client_fd, request, sizeof(LoginRequest), 0);
-
-//    return request;
-//}
 
 CreateUser *build_create_user_request()
 {
@@ -369,31 +256,6 @@ FriendRemarkRequest *build_friend_remark_request()
     printf("请输入好友备注: ");
     scanf("%s", req->remark);
     return req;
-}
-// 初始化客户端
-void init_client()
-{
-    struct sockaddr_in server_addr;
-
-    // 创建主套接字
-    client_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (client_fd < 0)
-    {
-        perror("创建套接字失败");
-        exit(1);
-    }
-
-    server_addr.sin_family = AF_INET;
-    server_addr.sin_port = htons(SERVER_PORT);
-    server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
-
-    // 连接服务器
-    if (connect(client_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
-    {
-        perror("连接服务器失败");
-        close(client_fd);
-        exit(1);
-    }
 }
 
 int file_sock_init()

@@ -4,26 +4,11 @@
 #include <QThread>
 #include <QObject>
 #include <QString>
-#include <client.h>
+#include "client.h"
 extern "C" {
-
-    void *receive_response(void *arg); // 声明 C 函数
+    void *receive_response(); // 声明 C 函数
 }
 
-// 消息处理类
-class ResponseHandler : public QObject {
-    Q_OBJECT
-public:
-    explicit ResponseHandler(QObject *parent = nullptr) : QObject(parent) {}
-
-signals:
-    void messageReceived(const QVariant &data);
-
-public:
-    void emitMessage(const QVariant &data) {
-        emit messageReceived(data);
-    }
-};
 
 class ResponseThread : public QThread
 {
@@ -36,15 +21,8 @@ public:
 
 protected:
     void run() override;
-public slots:
-    void sendRequest(void*req) {
-        unsigned int length=*(unsigned int*)req;
-        send(client_fd, req,length , 0);
-    }
 signals:
     void responseReceived(const QVariant &data); // 定义信号以通知主线程
-private:
-    ResponseHandler responseHandler;  // 消息处理类实例
 };
 
 

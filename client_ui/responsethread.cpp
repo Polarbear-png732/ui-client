@@ -1,6 +1,11 @@
 #include "responsethread.h"
 #include <QDebug>
-#include "client.h"
+extern "C" {
+    #include "client.h" // 这是你C语言逻辑代码的头文件
+}
+extern int client_fd;
+extern ResponseThread* responseThread;
+
 ResponseThread::ResponseThread(QObject *parent)
     : QThread(parent)
 {
@@ -16,9 +21,7 @@ ResponseThread::~ResponseThread()
 void ResponseThread::run()
 {
     qDebug() << "Response Thread started";
-    connect(&responseHandler, &ResponseHandler::messageReceived, this, &ResponseThread::responseReceived, Qt::QueuedConnection);
-    // 调用 C 函数，传递 responseHandler 的指针，需要进行类型转换
-    receive_response(static_cast<void*>(&responseHandler));
+    receive_response();
 
     qDebug() << "Response Thread finished";
 }

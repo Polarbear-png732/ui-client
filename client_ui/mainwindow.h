@@ -16,16 +16,14 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 signals:
-    void requestToSend(void *req); // 定义发送请求的信号
+    void requestToSend_1(void *req); // 定义发送请求的信号
+
 private slots:
     void onLoginClicked();
     void onRegisterClicked();
     void handleResponse(const QVariant &data);
-    void startResponseThread();
 private:
     Ui::MainWindow *ui;
-    ResponseThread *responseThread;
-     SendThread *sendThread; // 发送线程作为成员变量
 };
 
 

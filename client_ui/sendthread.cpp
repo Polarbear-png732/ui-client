@@ -3,6 +3,8 @@
 #include <unistd.h> // For usleep if needed
 #include <cstdlib>  // For malloc and free
 #include <cstdio>   // For perror
+#include <QDebug>
+
 
 SendThread::SendThread(QObject *parent)
     : QThread(parent), stopFlag(false) // 初始化停止标志
@@ -27,13 +29,16 @@ void SendThread::sendRequest(void *req)
     QMutexLocker locker(&mutex);
     if (req) {
         pendingRequests.enqueue(req); // 将请求加入队列
+        qDebug() << "Request added to queue, total requests:" << pendingRequests.size();
         condition.wakeOne();         // 唤醒线程处理
     }
 }
 
 void SendThread::run()
 {
+
     while (true) {
+        qDebug() << "SendThread running, waiting for requests.";
         void *request = nullptr;
 
         {
@@ -57,8 +62,9 @@ void SendThread::run()
 
         // 发送请求
         if (request) {
-            unsigned int length = *(unsigned int *)request; // 假设请求前 4 字节是长度
+            unsigned int length = ntohl(*(unsigned int *)request); // 假设请求前 4 字节是长度
             int result = send(client_fd, request, length, 0); // 发送请求
+            qDebug() << "Sending request, size of request:" << sizeof(request);
             free(request); // 释放动态分配的内存
 
             if (result == -1) {
