@@ -13,6 +13,8 @@ extern "C" {
 extern int client_fd;
 ResponseThread* responseThread=nullptr;
 SendThread* sendThread=nullptr;
+pthread_mutex_t mutex;
+pthread_cond_t cond;
 
 void init_client()
 {
@@ -48,17 +50,15 @@ int main(int argc, char *argv[])
         a.setStyleSheet(QLatin1String(file.readAll())); // 使用正确的对象名称 a
         file.close();
     }
-
+    int logflag=0;
+    pthread_mutex_init(&mutex, NULL);
+    pthread_cond_init(&cond, NULL);
     sendThread = new SendThread(&a);
     sendThread->start();
     responseThread = new ResponseThread(&a); // 父对象是 QCoreApplication
     responseThread->start();
     MainWindow w;
     w.show();
-
-
-
-
 
     qDebug() << "Client FD:" << QString::number(client_fd);
 

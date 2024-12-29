@@ -16,10 +16,12 @@ class registerwindow : public QMainWindow  // 改为继承 QMainWindow
 public:
     explicit registerwindow(QWidget *parent = nullptr);
     ~registerwindow();
+    void handleResponse(const QVariant &data);
 protected:
     void closeEvent(QCloseEvent *event) override;
 private slots:
     void register_2_clicked();
+
 signals:
     void requestToSend(void *req); // 定义发送请求的信号
 private:

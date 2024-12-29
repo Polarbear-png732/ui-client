@@ -8,11 +8,12 @@
 #include "sendthread.h"
 #include "logged.h"
 #include "messagedispatcher.h"
-
+extern "C" {
+    #include "client.h" // 这是你C语言逻辑代码的头文件
+}
 extern int client_fd;
 extern ResponseThread* responseThread;
 extern SendThread* sendThread;
-
 
 void *receive_response();
 void *build_login_request(const QString &username, const QString &password);
@@ -72,44 +73,40 @@ void MainWindow::onRegisterClicked()
     registerwindow *regWindow = new registerwindow(this); // 设置父窗口为 MainWindow
 
     connect(regWindow, &registerwindow::requestToSend, sendThread, &SendThread::sendRequest);//设置发送消息的信号绑定到发送线程的函数
+    connect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, regWindow, &registerwindow::handleResponse);
 
     regWindow->setAttribute(Qt::WA_DeleteOnClose); // 窗口关闭时自动删除
     regWindow->show(); // 显示注册窗口
 }
-
-
-
 void MainWindow::handleResponse(const QVariant &data)
 {
     QString message;
     qDebug() << "Received QVariant data type:" << data.typeName();
-    if (data.canConvert<unsigned int>()) {
-        unsigned int dataUInt = data.toUInt();
-        qDebug() << "Received unsigned int value:" << dataUInt;
+        qDebug() << "Raw data:" << data;
 
-        // If unsigned int has the value 10021, switch window
-        if (dataUInt == 10021) {
-            disconnect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, this, &MainWindow::handleResponse);
-            qDebug() << "Logged started!";
-            this->hide();
-            logged *friendlist = new logged(this, this);                    //登录后的窗口
-            friendlist->setAttribute(Qt::WA_DeleteOnClose);
-            friendlist->show();
-//            connect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, friendlist, &LoggedWindow::handleResponse);
-            return; // Exit the function since the window has switched
-        }
-
-        message = QString::number(dataUInt);
-    }
-    else if (data.canConvert<QString>()) {
+    if (data.type() == QVariant::String) {
         QString dataString = data.toString(); // Convert and save the string
         qDebug() << "String message:" << dataString;
         message = dataString;
     }
-    else {
-        qDebug() << "Other data type received";
-        message = "未知数据类型"; // Message for unknown data types
-    }
+    else{
+            unsigned int dataUInt = data.toUInt();
+            qDebug() << "Received unsigned int value:" << dataUInt;
+            if (dataUInt == 10021) {
+                disconnect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, this, &MainWindow::handleResponse);
+                qDebug() << "Logged started!";
+                this->hide();
+                logged *friendlist = new logged(this);                    //登录后的窗口
+                friendlist->setAttribute(Qt::WA_DeleteOnClose);
+                friendlist->show();
+                connect(friendlist, &logged::requestToSend, sendThread, &SendThread::sendRequest);
+                connect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, friendlist, &logged::handleResponse);
+                pthread_cond_signal(&cond);
+            return;
+            }
+
+            message = QString::number(dataUInt);
+        }
 
     QMessageBox::information(this, "反馈", message);
     // ui->statusBar->showMessage(message, 5000);
@@ -122,6 +119,7 @@ void *receive_response()
     char buffer[BUFSIZE];
     unsigned int req_length;
     unsigned int size_len = sizeof(req_length);
+    int i=0;
     while (1)
     {
         qDebug() << "Client FD:" << QString::number(client_fd);
@@ -179,9 +177,15 @@ void *receive_response()
         default:
         {
             FeedbackMessage *message = (FeedbackMessage *)buffer;
-
             QString message_1 = QString::fromUtf8(message->message);
+            qDebug() << "message:" << message_1;
+            pthread_mutex_lock(&mutex);
+            if(i==0){
+            pthread_cond_wait(&cond, &mutex);
+            i++;
+            }
             MessageDispatcher::instance().dispatchMessage(message_1);
+            pthread_mutex_unlock(&mutex);
             break;
         }
         }

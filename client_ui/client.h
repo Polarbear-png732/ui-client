@@ -7,7 +7,6 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <arpa/inet.h>
-
 #include <unistd.h>
 #include <signal.h>
 
@@ -18,9 +17,10 @@ extern "C" {
 #endif
 // 协议请求类型
 // 请求码定义
+extern pthread_mutex_t mutex; // 互斥锁用于控制对共享资源的访问
+extern pthread_cond_t cond;
 extern int client_fd;
 extern char session_token[64];
-
 #define SERVER_IP "127.0.0.1" // 服务器IP地址
 #define SERVER_PORT 10005     // 服务器端口
 #define FILE_TRANSFER_SERVER_PORT 10007
@@ -229,7 +229,6 @@ void send_polling(void *arg);
 
 // 客户端全局变量
 
-extern pthread_mutex_t lock; // 互斥锁用于控制对共享资源的访问
 
 CreateUser *build_create_user_request();
 FriendRequest *build_friend_request();

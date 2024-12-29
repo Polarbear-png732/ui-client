@@ -4,6 +4,8 @@
 #include <QCloseEvent>
 #include "client.h"
 #include "sendthread.h"
+#include <QDebug>
+#include <QMessageBox>
 extern ResponseThread* responseThread;
 extern SendThread* sendThread;
 extern int client_fd;
@@ -26,8 +28,7 @@ void registerwindow::closeEvent(QCloseEvent *event)
     QWidget::closeEvent(event); // 保留基类行为
     if (parentWidget()) {
         parentWidget()->show(); // 关闭注册窗口时显示父窗口
-    }
-
+    }    
 }
 
 void registerwindow::register_2_clicked()
@@ -52,5 +53,25 @@ void registerwindow::register_2_clicked()
     // 发出信号，将请求传递给发送线程
     emit requestToSend(request);
 
+}
+
+void registerwindow::handleResponse(const QVariant &data)
+{
+    QString message;
+    qDebug() << "Received QVariant data type:" << data.typeName();
+        qDebug() << "Raw data:" << data;
+
+    if (data.type() == QVariant::String) {
+        QString dataString = data.toString(); // Convert and save the string
+        qDebug() << "String message:" << dataString;
+        message = dataString;
+    }
+    else{
+            unsigned int dataUInt = data.toUInt();
+            qDebug() << "Received unsigned int value:" << dataUInt;
+            message = QString::number(dataUInt);
+        }
+    QMessageBox::information(this, "反馈", message);
+    // ui->statusBar->showMessage(message, 5000);
 }
 
