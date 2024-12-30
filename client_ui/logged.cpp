@@ -70,25 +70,18 @@ void logged::handleResponse(const QVariant &data)
         // 如果数据是 QString 类型
         QString dataString = data.toString();
         char* message = dataString.toUtf8().data(); // 或者 dataString.toStdString().c_str();
+
         if (strncmp(message, "好友", 6) == 0) { // "好友" 是 6 个字节
             parseFriendList(message);
             QMetaObject::invokeMethod(this, "updateFriendList", Qt::QueuedConnection);
-           } else{
+           }
+        else if(strncmp(message, "群聊", 6) == 0){
             parseGroupInfo(message,groups,&groupsCount);
-            for (int i = 0; i < groupsCount;i++) {
-                qDebug() << "群聊名称:" << groups[i].name;
-                qDebug() << "群聊ID:" << groups[i].id;
-                qDebug() << "群主:" << groups[i].owner;
-                qDebug() << "成员总数:" << groups[i].memberCount;
-                qDebug() << "成员列表:";
-                for (int j = 0; j < groups[i].memberCount; j++) {
-                    qDebug() << "  -" << groups[i].members[j];
-                }
-                qDebug() << "";
-            }
+        }
+        else{
+            QMessageBox::information(this, "好友请求", dataString);
         }
       }
-
     else if (data.canConvert<unsigned int>()) {
         // 如果数据可以转换为 unsigned int
         unsigned int dataUInt = data.toUInt();
