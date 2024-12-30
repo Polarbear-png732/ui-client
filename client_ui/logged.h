@@ -21,6 +21,8 @@ signals:
     void requestToSend(void *req); // 定义发送请求的信号
 private slots:
     void updateFriendList();
+    void on_addfriend_clicked();
+
 private:
     Ui::logged *ui;
     QMainWindow *loginWindow;  // 存储登录窗口指针

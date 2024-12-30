@@ -7,7 +7,7 @@
 #include "sendthread.h"
 #include <QDebug>
 #include <QMessageBox>
-
+#include "addfrienddialog.h"
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
@@ -26,25 +26,18 @@ logged::logged(QWidget *parent) :
              m_Item->setSizeHint(QSize(300, 90));
              ui->listWidget->setItemWidget(m_Item, friItem);
         }
+    ui->headimg->setStyleSheet(
+        "QLabel {"
+        "    border-radius: 25px;" // 半径为宽或高的一半
+        "    border: 2px solid gray;" // 可选，添加边框
+        "    border-image: url(:/image/poalrbear.png) 0 0 0 0 stretch stretch;" // 设置图片
+        "}"
+    );
 
-        ui->listWidget->setStyleSheet("QListWidget::item:hover {"
+       ui->listWidget->setStyleSheet("QListWidget::item:hover {"
                                       "background-color: rgb(200,200,200);"
                                       "}");
 
-//    pthread_mutex_lock(&loggedui_mutex);
-//    pthread_cond_wait(&loggedui_cond, &loggedui_mutex);  //等待接收完消息，再开始渲染
-
-//    for(int i=0;i<friendCount;i++){
-//         friendItem * friItem=new friendItem();
-//         QListWidgetItem* m_Item=new QListWidgetItem(ui->listWidget);
-//         m_Item->setSizeHint(QSize(300,90));
-//         ui->listWidget->setItemWidget(m_Item,friItem);
-//         friItem->setFriendInfo(friendList[i].name,friendList[i].status);
-//     }
-//     pthread_mutex_lock(&loggedui_mutex);
-//     ui->listWidget->setStyleSheet("QListWidget::item:hover {"
-//                                   "background-color: rgb(200,200,200);"
-//                                   "}");
 }
 
 logged::~logged()
@@ -120,4 +113,17 @@ void logged::updateFriendList() {
         ui->listWidget->setItemWidget(m_Item, friItem);
         friItem->setFriendInfo(friendList[i].name, friendList[i].status);
     }
+    for(int i=0;i<groupsCount;i++){
+        friendItem *friItem = new friendItem();
+        QListWidgetItem* m_Item = new QListWidgetItem(ui->listWidget);
+        m_Item->setSizeHint(QSize(300, 90));
+        ui->listWidget->setItemWidget(m_Item, friItem);
+        friItem->setFriendInfo(groups[i].name, QString::number(groups[i].memberCount));
+    }
+}
+
+void logged::on_addfriend_clicked()
+{
+    AddFriendDialog dialog(this);  // 创建对话框
+    dialog.exec();
 }

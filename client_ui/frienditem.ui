@@ -41,12 +41,23 @@ background-color: rgb(138, 241, 244);
     <rect>
      <x>110</x>
      <y>10</y>
-     <width>61</width>
-     <height>16</height>
+     <width>71</width>
+     <height>21</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Ubuntu Light</family>
+     <pointsize>12</pointsize>
+     <weight>75</weight>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <property name="text">
-    <string/>
+    <string>name</string>
    </property>
   </widget>
   <widget class="QLabel" name="onoffLabel">
@@ -57,6 +68,9 @@ background-color: rgb(138, 241, 244);
      <width>51</width>
      <height>20</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
    </property>
    <property name="text">
     <string/>

@@ -24,6 +24,39 @@
      </rect>
     </property>
    </widget>
+   <widget class="QLabel" name="headimg">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>51</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">
+border-image: url(:/image/poalrbear.png);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="addfriend">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>51</y>
+      <width>51</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/image/addfriend.png);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

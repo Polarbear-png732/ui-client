@@ -31,7 +31,8 @@ SOURCES += \
     responsethread.cpp \
     logged.cpp \
     frienditem.cpp \
-    sendthread.cpp
+    sendthread.cpp \
+    addfrienddialog.cpp
 
 
 HEADERS += \
@@ -42,7 +43,8 @@ HEADERS += \
     logged.h \
     frienditem.h \
     sendthread.h \
-    messagedispatcher.h
+    messagedispatcher.h \
+    addfrienddialog.h
 
 
 FORMS += \

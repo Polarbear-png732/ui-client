@@ -37,14 +37,11 @@ void registerwindow::register_2_clicked()
 {
     QString username = ui->usernameLineEdit->text();
     QString password = ui->passwordLineEdit->text();
-
-    // 构造请求
     CreateUser *request = (CreateUser *)malloc(sizeof(CreateUser));
     if (!request) {
         perror("内存分配失败");
         return;
     }
-
     request->request_code = htonl(REQUEST_CREATEUSER);
     strncpy(request->username, username.toStdString().c_str(), sizeof(request->username) - 1);
     request->username[sizeof(request->username) - 1] = '\0';

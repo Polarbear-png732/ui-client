@@ -4,9 +4,10 @@
     </qresource>
     <qresource prefix="/image"/>
     <qresource prefix="/images"/>
-    <qresource prefix="/images" lang="00"/>
-    <qresource prefix="/image" lang="0"/>
-    <qresource prefix="/image" lang="000">
+    <qresource lang="00" prefix="/images"/>
+    <qresource lang="0" prefix="/image"/>
+    <qresource lang="000" prefix="/image">
         <file>poalrbear.png</file>
+        <file>addfriend.png</file>
     </qresource>
 </RCC>
