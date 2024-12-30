@@ -57,6 +57,22 @@ border-image: url(:/image/poalrbear.png);</string>
      <string/>
     </property>
    </widget>
+   <widget class="QPushButton" name="friendReq">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>102</y>
+      <width>51</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border-image: url(:/image/friendReq.png);</string>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">

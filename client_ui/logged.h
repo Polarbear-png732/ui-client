@@ -23,6 +23,8 @@ private slots:
     void updateFriendList();
     void on_addfriend_clicked();
 
+    void on_friendReq_clicked();
+
 private:
     Ui::logged *ui;
     QMainWindow *loginWindow;  // 存储登录窗口指针

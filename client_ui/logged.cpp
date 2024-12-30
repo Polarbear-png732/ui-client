@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include "addfrienddialog.h"
+#include "handleaddfrienddialog.h"
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
@@ -33,6 +34,7 @@ logged::logged(QWidget *parent) :
         "    border-image: url(:/image/poalrbear.png) 0 0 0 0 stretch stretch;" // 设置图片
         "}"
     );
+
 
        ui->listWidget->setStyleSheet("QListWidget::item:hover {"
                                       "background-color: rgb(200,200,200);"
@@ -126,4 +128,10 @@ void logged::on_addfriend_clicked()
 {
     AddFriendDialog dialog(this);  // 创建对话框
     dialog.exec();
+}
+
+void logged::on_friendReq_clicked()
+{
+    HandleFriendDialog dialg(this);
+    dialg.exec();
 }
