@@ -16,6 +16,14 @@ SendThread* sendThread=nullptr;
 pthread_mutex_t mutex;
 pthread_cond_t cond;
 
+pthread_mutex_t loggedui_mutex;
+pthread_cond_t loggedui_cond;
+
+FriendInfo friendList[MAX_FRIENDS];
+int friendCount = 0;
+GroupInfo groups[MAX_FRIENDS];
+int groupsCount=0;
+
 void init_client()
 {
     struct sockaddr_in server_addr;
@@ -50,9 +58,10 @@ int main(int argc, char *argv[])
         a.setStyleSheet(QLatin1String(file.readAll())); // 使用正确的对象名称 a
         file.close();
     }
-    int logflag=0;
     pthread_mutex_init(&mutex, NULL);
     pthread_cond_init(&cond, NULL);
+    pthread_mutex_init(&loggedui_mutex, NULL);
+    pthread_cond_init(&loggedui_cond, NULL);
     sendThread = new SendThread(&a);
     sendThread->start();
     responseThread = new ResponseThread(&a); // 父对象是 QCoreApplication
@@ -62,22 +71,6 @@ int main(int argc, char *argv[])
 
     qDebug() << "Client FD:" << QString::number(client_fd);
 
-
-
-
-
-//    if (responseThread->isRunning()) {
-//        responseThread->requestInterruption(); // 请求中断
-//        responseThread->quit();               // 退出线程事件循环
-//        responseThread->wait();               // 等待线程退出
-//    }
-//    if (sendThread) {
-//        sendThread->stop(); // 自定义的停止方法，设置标志并唤醒线程
-//        sendThread->wait(); // 等待线程安全退出
-//        delete sendThread;
-//    }
-//    logged log;
-//    log.show();
 
     return a.exec(); // 使用正确的对象名称 a
 }

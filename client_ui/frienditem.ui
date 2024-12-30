@@ -16,7 +16,7 @@
   <property name="styleSheet">
    <string notr="true">selection-background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));</string>
   </property>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="headimg">
    <property name="geometry">
     <rect>
      <x>20</x>
@@ -36,30 +36,30 @@ background-color: rgb(138, 241, 244);
     <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="nameLabel">
    <property name="geometry">
     <rect>
      <x>110</x>
      <y>10</y>
-     <width>71</width>
+     <width>61</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>name</string>
+    <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QLabel" name="onoffLabel">
    <property name="geometry">
     <rect>
-     <x>230</x>
+     <x>246</x>
      <y>10</y>
-     <width>67</width>
-     <height>17</height>
+     <width>51</width>
+     <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>o&amp;off</string>
+    <string/>
    </property>
   </widget>
  </widget>

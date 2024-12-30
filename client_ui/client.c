@@ -28,7 +28,95 @@ void exit_client()
     pid_t pid = getpid();
     kill(pid, SIGKILL);
 }
+void parseFriendList(char* message) {
+    char* line = strtok((char*)message, "\n");  // 按行分割
 
+    if (line != NULL) {
+        line = strtok(NULL, "\n");            // 跳过第一行
+    }
+    while (line != NULL) {
+        // 跳过空行
+        if (strlen(line) == 0) {
+            line = strtok(NULL, "\n");
+            continue;
+        }
+
+        // 提取名字、备注和状态
+        FriendInfo friendInfo;
+        char* status = strstr(line, ":");  // 查找状态部分，假设状态在":"之后
+        if (status != NULL) {
+            // 提取状态（"offline" 或 "online"）
+            strcpy(friendInfo.status, status + 2);  // 假设状态紧跟在":"后面
+            *status = '\0';  // 将":"变为字符串结尾，截断名字和备注部分
+        } else {
+            strcpy(friendInfo.status, "unknown"); // 如果没有找到状态，默认状态为 "unknown"
+        }
+
+        // 查找括号，提取备注
+        char* bracketStart = strchr(line, '(');
+        if (bracketStart != NULL) {
+            // 有备注，提取备注
+            char* bracketEnd = strchr(bracketStart, ')');
+            if (bracketEnd != NULL) {
+                *bracketEnd = '\0';  // 把 ')' 变成字符串结束符
+                strcpy(friendInfo.remark, bracketStart + 1);  // 备注在括号内
+                *bracketStart = '\0';  // 截断名字部分
+            }
+        } else {
+            friendInfo.remark[0] = '\0';  // 没有备注
+        }
+
+        // 提取名字
+        strcpy(friendInfo.name, line);
+
+        // 将解析到的好友信息保存到列表中
+        if (friendCount < MAX_FRIENDS) {
+            friendList[friendCount++] = friendInfo;
+        }
+
+        // 继续处理下一行
+        line = strtok(NULL, "\n");
+    }
+}
+
+void parseGroupInfo(char *message, GroupInfo *groups, int *groupCount) {
+    const char *line = message;
+    char buffer[256];  // 用于存储当前行
+    int groupIndex = -1;
+
+    while (sscanf(line, "%[^\n]\n", buffer) == 1) {
+        if (strncmp(buffer, "群聊:", 7) == 0) {
+            // 新的群聊，初始化结构体
+            groupIndex++;
+            *groupCount = groupIndex + 1;
+
+            // 提取群聊名称和 ID
+            char groupName[MAX_NAME_LENGTH];
+            int groupId;
+            sscanf(buffer, "群聊:%[^ ] id：%d", groupName, &groupId);
+
+            strcpy(groups[groupIndex].name, groupName);
+            groups[groupIndex].id = groupId;
+            groups[groupIndex].memberCount = 0;
+
+        } else if (strchr(buffer, '（') && strstr(buffer, "群主")) {
+            // 群主信息
+            char ownerName[MAX_NAME_LENGTH];
+            sscanf(buffer, "%[^（]（群主）", ownerName);
+            strcpy(groups[groupIndex].owner, ownerName);
+
+            // 将群主也作为成员加入成员列表
+            strcpy(groups[groupIndex].members[groups[groupIndex].memberCount++], ownerName);
+
+        } else {
+            // 普通成员
+            strcpy(groups[groupIndex].members[groups[groupIndex].memberCount++], buffer);
+        }
+
+        // 移动到下一行
+        line += strlen(buffer) + 1;
+    }
+}
 CreateUser *build_create_user_request()
 {
     CreateUser *request = malloc(sizeof(CreateUser));

@@ -101,7 +101,7 @@ void MainWindow::handleResponse(const QVariant &data)
                 friendlist->show();
                 connect(friendlist, &logged::requestToSend, sendThread, &SendThread::sendRequest);
                 connect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, friendlist, &logged::handleResponse);
-                pthread_cond_signal(&cond);
+                pthread_cond_signal(&cond);      //窗口切换成功，发送激发条件变量，让接收进程发送相关多消息过来
             return;
             }
 

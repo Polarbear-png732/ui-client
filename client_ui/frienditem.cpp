@@ -7,6 +7,8 @@ friendItem::friendItem(QWidget *parent) :
 {
     ui->setupUi(this);
      this->setAttribute(Qt::WA_Hover); // 启用鼠标追踪
+    nameLabel = ui->nameLabel;
+    statusLabel = ui->onoffLabel;
 }
 
 friendItem::~friendItem()
@@ -17,7 +19,12 @@ friendItem::~friendItem()
 void friendItem::setHeadimage(QString imgpath){
     // 构建样式表字符串，确保图片路径是URL格式
     QString styleSheet = QString("border-image: url(%1);").arg(imgpath);
-    ui->label->setStyleSheet(styleSheet);
+    ui->headimg->setStyleSheet(styleSheet);
+}
+void friendItem::setFriendInfo(const QString &name,  const QString &status)
+{
+    nameLabel->setText(name);
+    statusLabel->setText(status);
 }
 
 

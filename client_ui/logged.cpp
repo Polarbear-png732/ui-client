@@ -7,25 +7,44 @@
 #include "sendthread.h"
 #include <QDebug>
 #include <QMessageBox>
+
+extern "C" {
+    #include "client.h" // 这是你C语言逻辑代码的头文件
+}
 extern ResponseThread* responseThread;
 extern SendThread* sendThread;
-
+extern GroupInfo groups[MAX_FRIENDS];
+extern int groupCount;
 logged::logged(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::logged)
 {
-    ui->setupUi(this);
-    for(int i=1;i<20;i++){
-         friendItem * friItem=new friendItem();
+        ui->setupUi(this);
+    for (int i = 0; i < 5; i++) { // 假设显示空的占位项
+             friendItem *friItem = new friendItem();
+             QListWidgetItem* m_Item = new QListWidgetItem(ui->listWidget);
+             m_Item->setSizeHint(QSize(300, 90));
+             ui->listWidget->setItemWidget(m_Item, friItem);
+        }
 
-         QListWidgetItem* m_Item=new QListWidgetItem(ui->listWidget);
-         m_Item->setSizeHint(QSize(300,90));
-         ui->listWidget->setItemWidget(m_Item,friItem);
+        ui->listWidget->setStyleSheet("QListWidget::item:hover {"
+                                      "background-color: rgb(200,200,200);"
+                                      "}");
 
-     }
-     ui->listWidget->setStyleSheet("QListWidget::item:hover {"
-                                   "background-color: rgb(200,200,200);"  // 设置悬停时的背景色为黄色
-                                   "}");
+//    pthread_mutex_lock(&loggedui_mutex);
+//    pthread_cond_wait(&loggedui_cond, &loggedui_mutex);  //等待接收完消息，再开始渲染
+
+//    for(int i=0;i<friendCount;i++){
+//         friendItem * friItem=new friendItem();
+//         QListWidgetItem* m_Item=new QListWidgetItem(ui->listWidget);
+//         m_Item->setSizeHint(QSize(300,90));
+//         ui->listWidget->setItemWidget(m_Item,friItem);
+//         friItem->setFriendInfo(friendList[i].name,friendList[i].status);
+//     }
+//     pthread_mutex_lock(&loggedui_mutex);
+//     ui->listWidget->setStyleSheet("QListWidget::item:hover {"
+//                                   "background-color: rgb(200,200,200);"
+//                                   "}");
 }
 
 logged::~logged()
@@ -52,12 +71,29 @@ void logged::handleResponse(const QVariant &data)
     qDebug() << "Raw data:" << data;
 
     if (data.type() == QVariant::String) {
+        qDebug() << "QString type:" << data;
         // 如果数据是 QString 类型
         QString dataString = data.toString();
-        qDebug() << "String message:" << dataString;
+        char* message = dataString.toUtf8().data(); // 或者 dataString.toStdString().c_str();
+        if (strncmp(message, "好友", 6) == 0) { // "好友" 是 6 个字节
+            parseFriendList(message);
+            QMetaObject::invokeMethod(this, "updateFriendList", Qt::QueuedConnection);
+           } else{
+            parseGroupInfo(message,groups,&groupsCount);
+            for (int i = 0; i < groupsCount;i++) {
+                qDebug() << "群聊名称:" << groups[i].name;
+                qDebug() << "群聊ID:" << groups[i].id;
+                qDebug() << "群主:" << groups[i].owner;
+                qDebug() << "成员总数:" << groups[i].memberCount;
+                qDebug() << "成员列表:";
+                for (int j = 0; j < groups[i].memberCount; j++) {
+                    qDebug() << "  -" << groups[i].members[j];
+                }
+                qDebug() << "";
+            }
+        }
+      }
 
-        QMessageBox::information(this, "反馈", dataString);
-    }
     else if (data.canConvert<unsigned int>()) {
         // 如果数据可以转换为 unsigned int
         unsigned int dataUInt = data.toUInt();
@@ -70,5 +106,18 @@ void logged::handleResponse(const QVariant &data)
         // 处理其他数据类型
         qDebug() << "Other data type received";
         QMessageBox::information(this, "反馈", "未知数据类型");
+    }
+    pthread_cond_signal(&loggedui_cond);
+}
+
+
+void logged::updateFriendList() {
+    ui->listWidget->clear(); // 清空占位项
+    for (int i = 0; i < friendCount; i++) {
+        friendItem *friItem = new friendItem();
+        QListWidgetItem* m_Item = new QListWidgetItem(ui->listWidget);
+        m_Item->setSizeHint(QSize(300, 90));
+        ui->listWidget->setItemWidget(m_Item, friItem);
+        friItem->setFriendInfo(friendList[i].name, friendList[i].status);
     }
 }

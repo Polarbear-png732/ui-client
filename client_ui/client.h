@@ -15,12 +15,33 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-// 协议请求类型
-// 请求码定义
+#define MAX_GROUPS 100      // 最大群聊数量
+#define MAX_MEMBERS 10      // 每个群聊的最大成员数量
+#define MAX_NAME_LENGTH 64  // 名称最大长度
+#define MAX_FRIENDS 10
+// 群聊信息结构体
+typedef struct {
+    char name[MAX_NAME_LENGTH];       // 群聊名称
+    int id;                           // 群聊 ID
+    char owner[MAX_NAME_LENGTH];      // 群主
+    char members[MAX_MEMBERS][MAX_NAME_LENGTH]; // 群成员
+    int memberCount;                  // 群成员总人数
+} GroupInfo;
+typedef struct {
+    char name[32];   // 好友名字
+    char remark[32]; // 备注
+    char status[32]; // 在线状态
+} FriendInfo;
+extern GroupInfo groups[MAX_FRIENDS];
+extern int groupsCount;
 extern pthread_mutex_t mutex; // 互斥锁用于控制对共享资源的访问
 extern pthread_cond_t cond;
+extern pthread_mutex_t loggedui_mutex;
+extern pthread_cond_t loggedui_cond;
 extern int client_fd;
 extern char session_token[64];
+extern FriendInfo friendList[10];
+extern int friendCount;
 #define SERVER_IP "127.0.0.1" // 服务器IP地址
 #define SERVER_PORT 10005     // 服务器端口
 #define FILE_TRANSFER_SERVER_PORT 10007
@@ -53,7 +74,7 @@ extern char session_token[64];
 #define FAIL 500
 
 #define CLIENT_EXIT 10000
-
+#define MAX_FRIENDS 10
 #define BUFSIZE 4096
 #define TOKEN_LEN 64
 #define MAX_USERNAME_LENGTH 32
@@ -220,8 +241,8 @@ typedef struct
     unsigned int request_code; // 请求码
     char token[64];            // 用于后续传输
 } Polling;
-// 线程函数声明
-
+void parseGroupInfo(char *message, GroupInfo *groups, int *groupCount);
+void parseFriendList(char* message);
 void *receive_response();
 void init_client();
 int recv_full(int sock, void *buf, size_t len);

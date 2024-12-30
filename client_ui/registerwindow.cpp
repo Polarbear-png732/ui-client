@@ -2,10 +2,12 @@
 #include "ui_registerwindow.h"
 #include "mainwindow.h"
 #include <QCloseEvent>
-#include "client.h"
 #include "sendthread.h"
 #include <QDebug>
 #include <QMessageBox>
+extern "C" {
+    #include "client.h" // 这是你C语言逻辑代码的头文件
+}
 extern ResponseThread* responseThread;
 extern SendThread* sendThread;
 extern int client_fd;

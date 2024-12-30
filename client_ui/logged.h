@@ -19,6 +19,8 @@ protected:
     void closeEvent(QCloseEvent *event) override; // 处理关闭事件
 signals:
     void requestToSend(void *req); // 定义发送请求的信号
+private slots:
+    void updateFriendList();
 private:
     Ui::logged *ui;
     QMainWindow *loginWindow;  // 存储登录窗口指针
