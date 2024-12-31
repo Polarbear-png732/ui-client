@@ -9,6 +9,8 @@
 #include <QMessageBox>
 #include "addfrienddialog.h"
 #include "handleaddfrienddialog.h"
+#include <QTimer>
+#include "friendreqlist.h"
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
@@ -39,6 +41,8 @@ logged::logged(QWidget *parent) :
        ui->listWidget->setStyleSheet("QListWidget::item:hover {"
                                       "background-color: rgb(200,200,200);"
                                       "}");
+       sharedList.clear();
+       this->setProperty("sharedList", QVariant::fromValue(sharedList));
 
 }
 
@@ -60,15 +64,15 @@ void logged::closeEvent(QCloseEvent *event)
 
 void logged::handleResponse(const QVariant &data)
 {
-    qDebug() << "Received data type:" << data.typeName();
+//    qDebug() << "Received data type:" << data.typeName();
 
-    // 打印原始数据
-    qDebug() << "Raw data:" << data;
+//    // 打印原始数据
+//    qDebug() << "Raw data:" << data;
 
     if (data.type() == QVariant::String) {
         qDebug() << "QString type:" << data;
         // 如果数据是 QString 类型
-        QString dataString = data.toString();
+        const QString dataString = data.toString();
         char* message = dataString.toUtf8().data(); // 或者 dataString.toStdString().c_str();
 
         if (strncmp(message, "好友", 6) == 0) { // "好友" 是 6 个字节
@@ -79,7 +83,28 @@ void logged::handleResponse(const QVariant &data)
             parseGroupInfo(message,groups,&groupsCount);
         }
         else{
-            QMessageBox::information(this, "好友请求", dataString);
+            this->updateSharedList(dataString);
+            QLabel *popupLabel = new QLabel(this);
+                popupLabel->setText( dataString);
+                popupLabel->setStyleSheet(
+                    "QLabel {"
+                    "    background-color: qlineargradient("
+                    "        x1: 0, y1: 0, x2: 0, y2: 1, "
+                    "        stop: 0 rgba(180, 220, 255, 0.8), "
+                    "        stop: 1 rgba(100, 150, 255, 0.8)   "
+                    ");"
+                    "    border-radius: 5px;"
+                    "    padding: 10px;"
+                    "    font-size: 14px;"
+                    "}");
+                popupLabel->setAlignment(Qt::AlignCenter);
+                // 设置大小和位置
+                popupLabel->setFixedSize(200, 50);
+                popupLabel->move((width() - popupLabel->width()) / 2, 50);
+                popupLabel->setWindowFlags(Qt::ToolTip); // 确保消息始终在最前端
+                popupLabel->show();
+                QTimer::singleShot(2000, popupLabel, &QLabel::deleteLater);
+                this->printSharedList();
         }
       }
     else if (data.canConvert<unsigned int>()) {
@@ -125,6 +150,58 @@ void logged::on_addfriend_clicked()
 
 void logged::on_friendReq_clicked()
 {
-    HandleFriendDialog dialg(this);
-    dialg.exec();
+    // 尝试查找已存在的FriendReqList窗口
+    FriendReqList *existingFriendList = findChild<FriendReqList *>();
+
+    // 如果没有找到，创建并显示新窗口
+    if (!existingFriendList) {
+        FriendReqList *friendlist = new FriendReqList(this);
+        friendlist->show();
+    } else {
+        // 如果已经存在该窗口，可以选择将其显示
+        existingFriendList->show();
+    }
+}
+
+void logged::updateSharedList(const QString &newValue)
+{
+    // 获取当前列表
+    sharedList = this->property("sharedList").value<QStringList>();
+    sharedList.append(newValue);  // 添加新元素
+
+    // 更新属性
+    this->setProperty("sharedList", QVariant::fromValue(sharedList));
+}
+
+void logged::removeSharedItem(const QString &valueToRemove)
+{
+    // 获取当前列表
+    sharedList = this->property("sharedList").value<QStringList>();
+
+    // 删除指定的字符串
+    sharedList.removeAll(valueToRemove);
+
+    // 更新属性
+    this->setProperty("sharedList", QVariant::fromValue(sharedList));
+}
+
+void logged::printSharedList()
+{
+    // 获取当前列表
+    sharedList = this->property("sharedList").value<QStringList>();
+
+    // 打印所有的字符串
+    qDebug() << "Current List:";
+    for (const QString &str : sharedList) {
+        qDebug() << str;
+    }
+}
+
+QStringList logged::getSharedList()
+{
+    // 获取当前列表
+    sharedList = this->property("sharedList").value<QStringList>();
+
+    // 返回列表
+    return sharedList;
 }

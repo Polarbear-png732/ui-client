@@ -15,6 +15,10 @@ public:
     explicit logged(QWidget *parent = nullptr);
     ~logged();
     void handleResponse(const QVariant &data);
+    void updateSharedList(const QString &newValue);
+    void removeSharedItem(const QString &valueToRemove);
+    void printSharedList();
+    QStringList getSharedList();
 protected:
     void closeEvent(QCloseEvent *event) override; // 处理关闭事件
 signals:
@@ -27,7 +31,7 @@ private slots:
 
 private:
     Ui::logged *ui;
-    QMainWindow *loginWindow;  // 存储登录窗口指针
+    QStringList sharedList;//用于存储好友请求列表
 
 };
 

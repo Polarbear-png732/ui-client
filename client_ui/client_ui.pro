@@ -33,7 +33,8 @@ SOURCES += \
     frienditem.cpp \
     sendthread.cpp \
     addfrienddialog.cpp \
-    handleaddfrienddialog.cpp
+    handleaddfrienddialog.cpp \
+    friendreqlist.cpp
 
 
 HEADERS += \
@@ -46,7 +47,8 @@ HEADERS += \
     sendthread.h \
     messagedispatcher.h \
     addfrienddialog.h \
-    handleaddfrienddialog.h
+    handleaddfrienddialog.h \
+    friendreqlist.h
 
 
 FORMS += \

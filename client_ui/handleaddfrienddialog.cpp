@@ -8,7 +8,7 @@ extern "C" {
     #include "client.h"  // C语言逻辑代码的头文件
 }
 
-HandleFriendDialog::HandleFriendDialog( QWidget *parent)
+HandleFriendDialog::HandleFriendDialog( const QString &message,QWidget *parent)
     : QDialog(parent)
 {
     setWindowTitle("处理好友请求");
@@ -16,7 +16,7 @@ HandleFriendDialog::HandleFriendDialog( QWidget *parent)
 
     // 创建显示好友名字的标签
     friendNameLabel = new QLabel(this);
-    friendNameLabel->setText( "某某");
+    friendNameLabel->setText( message);
     friendNameLabel->setAlignment(Qt::AlignCenter);
 
     // 创建按钮

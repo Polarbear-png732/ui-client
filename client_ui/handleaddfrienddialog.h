@@ -17,7 +17,7 @@ class HandleFriendDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit HandleFriendDialog( QWidget *parent = nullptr);
+    explicit HandleFriendDialog( const QString &message,QWidget *parent = nullptr);
 
 signals:
     void requestToSend(void *req);  // 定义发送请求的信号
