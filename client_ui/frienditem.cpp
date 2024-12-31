@@ -1,6 +1,6 @@
 #include "frienditem.h"
 #include "ui_frienditem.h"
-
+#include "messagedispatcher.h"
 friendItem::friendItem(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::friendItem)
@@ -43,5 +43,25 @@ QString friendItem::getOnOff() const
 {
     return statusLabel->text();
 }
+
+void MainWindow::handleResponse(const QVariant &data)
+{
+    QString message;
+    qDebug() << "Received QVariant data type:" << data.typeName();
+        qDebug() << "Raw data:" << data;
+
+    if (data.type() == QVariant::String) {
+s
+        QString dataString = data.toString(); // Convert and save the string
+        qDebug() << "String message:" << dataString;
+        message = dataString;
+    }
+
+
+    QMessageBox::information(this, "反馈", message);
+    // ui->statusBar->showMessage(message, 5000);
+}
+
+
 
 

@@ -13,12 +13,14 @@
 #include "friendreqlist.h"
 #include "friendchat.h"
 #include "frienditem.h"
+#include "sendthread.h"
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
 extern ResponseThread* responseThread;
 extern SendThread* sendThread;
 extern GroupInfo groups[MAX_FRIENDS];
+
 extern int groupCount;
 logged::logged(QWidget *parent) :
     QMainWindow(parent),
@@ -134,6 +136,7 @@ void logged::updateFriendList() {
         friendItem *friItem = new friendItem();
         QListWidgetItem* m_Item = new QListWidgetItem(ui->listWidget);
         m_Item->setSizeHint(QSize(300, 90));
+        connect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, friItem, &friItem::handleResponse);
         ui->listWidget->setItemWidget(m_Item, friItem);
         char name[64] = {0}; // 初始化数组，所有元素设置为 0（即空字符串）
         // 拼接 name
@@ -145,12 +148,15 @@ void logged::updateFriendList() {
             strcat(name, friendList[i].remark);
             strcat(name, ")");
         }
-        friItem->setFriendInfo(name, friendList[i].status);
+        char onoff[40];
+        snprintf(onoff,sizeof(onoff),"(%s)",friendList[i].status);
+        friItem->setFriendInfo(name, onoff);
         connect(friItem, &friendItem::clicked, this, [this, friItem]() {
             // 创建并显示好友聊天界面，父对象设置为 nullptr
             FriendChat *chatWindow = new FriendChat(this);
-            chatWindow->setWindowTitle(friItem->getName() + friItem->getOnOff()); // 设置窗口标题为好友名称
+            chatWindow->setWindowTitle(friItem->getName() +friItem->getOnOff()); // 设置窗口标题为好友名称
             chatWindow->show();
+            connect(chatWindow, &FriendChat::requestToSend, sendThread, &SendThread::sendRequest);//设置发送消息的信号绑定到发送线程的函数
         });
     }
 

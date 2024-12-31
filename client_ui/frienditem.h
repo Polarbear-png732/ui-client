@@ -19,6 +19,7 @@ public:
     void setFriendInfo(const QString &name, const QString &status);
     QString getName() const; // 添加获取名称的方法
     QString getOnOff() const; // 添加获取名称的方法
+    void handleResponse(const QVariant &data);
 protected:
     void mousePressEvent(QMouseEvent *event) override; // 重写鼠标点击事件
 signals:
@@ -27,6 +28,7 @@ private:
     Ui::friendItem *ui;
     QLabel *nameLabel;
     QLabel *statusLabel;
+    QString message;
 };
 
 #endif // FRIENDITEM_H
