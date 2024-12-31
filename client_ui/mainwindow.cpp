@@ -184,7 +184,6 @@ void *receive_response()
             pthread_cond_wait(&cond, &mutex);
             i++;
             }
-            MessageDispatcher::instance().dispatchMessage("flaskhgkas");
             MessageDispatcher::instance().dispatchMessage(message_1);
             pthread_mutex_unlock(&mutex);
             break;

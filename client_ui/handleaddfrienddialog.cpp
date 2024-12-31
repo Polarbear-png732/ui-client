@@ -3,6 +3,7 @@
 #include <QVBoxLayout>
 #include <QMessageBox>
 #include <sendthread.h>
+#include <QDebug>
 extern SendThread* sendThread;
 extern "C" {
     #include "client.h"  // C语言逻辑代码的头文件
@@ -61,8 +62,14 @@ void HandleFriendDialog::acceptFriendRequest() {
     strncpy(request->session_token, session_token, sizeof(session_token) - 1);
     request->session_token[sizeof(session_token) - 1] = '\0';
     QString username =friendNameLabel->text();
+    username.remove("新的好友：");  // 移除前缀
     strncpy(request->friend_username, username.toStdString().c_str(), sizeof(request->friend_username) - 1);
     request->friend_username[sizeof(request->friend_username) - 1] = '\0';  // 确保字符串以 null 结尾
+    qDebug() << "Request Code:" << ntohl(request->request_code);
+    qDebug() << "Action:" << ntohl(request->action);
+    qDebug() << "Length:" << ntohl(request->length);
+    qDebug() << "Session Token:" << request->session_token;
+    qDebug() << "Friend Username:" << request->friend_username;
     emit requestToSend(request);
     // 关闭对话框
     accept();
@@ -84,6 +91,7 @@ void HandleFriendDialog::rejectFriendRequest() {
     strncpy(request->session_token, session_token, sizeof(session_token) - 1);
     request->session_token[sizeof(session_token) - 1] = '\0';
     QString username = friendNameLabel->text();
+        username.remove("新的好友：");  // 移除前缀
     strncpy(request->friend_username, username.toStdString().c_str(), sizeof(request->friend_username) - 1);
     request->friend_username[sizeof(request->friend_username) - 1] = '\0';  // 确保字符串以 null 结尾
     emit requestToSend(request);

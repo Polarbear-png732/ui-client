@@ -84,6 +84,7 @@ void logged::handleResponse(const QVariant &data)
         }
         else{
             this->updateSharedList(dataString);
+            this->updateSharedList(dataString);
             QLabel *popupLabel = new QLabel(this);
                 popupLabel->setText( dataString);
                 popupLabel->setStyleSheet(
