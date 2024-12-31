@@ -10,5 +10,7 @@
         <file>poalrbear.png</file>
         <file>addfriend.png</file>
         <file>friendReq.png</file>
+        <file>delfriend.png</file>
+        <file>fiel.png</file>
     </qresource>
 </RCC>

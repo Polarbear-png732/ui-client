@@ -57,7 +57,7 @@ background-color: rgb(138, 241, 244);
     <string notr="true"/>
    </property>
    <property name="text">
-    <string>name</string>
+    <string/>
    </property>
   </widget>
   <widget class="QLabel" name="onoffLabel">

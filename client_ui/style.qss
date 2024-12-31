@@ -6,7 +6,7 @@ QPushButton {
     background-color: rgb(255, 215, 195);
     border: none;
     color: red;
-    padding: 15px 32px;
+    padding: 10px 20px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -19,12 +19,6 @@ QPushButton:pressed {
     background-color: #388e3c;
 }
 
-QLineEdit {
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 5px;
-}
 
 QLineEdit:focus {
     border: 1px solid #66afe9;

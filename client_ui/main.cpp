@@ -7,6 +7,7 @@
 #include "sendthread.h"
 #include "responsethread.h"
 #include <QDebug>
+#include "friendchat.h"
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
@@ -19,9 +20,9 @@ pthread_cond_t cond;
 pthread_mutex_t loggedui_mutex;
 pthread_cond_t loggedui_cond;
 
-FriendInfo friendList[MAX_FRIENDS];
+FriendInfo friendList[MAX_FRIENDS]={0};
 int friendCount = 0;
-GroupInfo groups[MAX_FRIENDS];
+GroupInfo groups[MAX_FRIENDS]={0};
 int groupsCount=0;
 
 void init_client()
@@ -58,6 +59,10 @@ int main(int argc, char *argv[])
         a.setStyleSheet(QLatin1String(file.readAll())); // 使用正确的对象名称 a
         file.close();
     }
+
+//    FriendChat f;
+//    f.show();
+
     pthread_mutex_init(&mutex, NULL);
     pthread_cond_init(&cond, NULL);
     pthread_mutex_init(&loggedui_mutex, NULL);
@@ -70,6 +75,7 @@ int main(int argc, char *argv[])
     w.show();
 
     qDebug() << "Client FD:" << QString::number(client_fd);
+
 
 
     return a.exec(); // 使用正确的对象名称 a

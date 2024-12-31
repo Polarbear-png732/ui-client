@@ -34,7 +34,8 @@ SOURCES += \
     sendthread.cpp \
     addfrienddialog.cpp \
     handleaddfrienddialog.cpp \
-    friendreqlist.cpp
+    friendreqlist.cpp \
+    friendchat.cpp
 
 
 HEADERS += \
@@ -48,14 +49,16 @@ HEADERS += \
     messagedispatcher.h \
     addfrienddialog.h \
     handleaddfrienddialog.h \
-    friendreqlist.h
+    friendreqlist.h \
+    friendchat.h
 
 
 FORMS += \
         mainwindow.ui \
     registerwindow.ui \
     logged.ui \
-    frienditem.ui
+    frienditem.ui \
+    friendchat.ui
 
 RESOURCES += \
     resources.qrc \

@@ -28,3 +28,20 @@ void friendItem::setFriendInfo(const QString &name,  const QString &status)
 }
 
 
+void friendItem::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        emit clicked(); // 发射点击信号
+    }
+    QWidget::mousePressEvent(event); // 调用基类的事件处理函数
+}
+QString friendItem::getName() const
+{
+    return nameLabel->text(); // 返回 nameLabel 的文本
+}
+QString friendItem::getOnOff() const
+{
+    return statusLabel->text();
+}
+
+

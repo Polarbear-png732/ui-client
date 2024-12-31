@@ -11,7 +11,7 @@ char file_name[256];
 void start_client()
 {
     init_client();
-    return 0;
+    return ;
 }
 
 void exit_client()

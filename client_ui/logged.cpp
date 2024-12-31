@@ -11,6 +11,8 @@
 #include "handleaddfrienddialog.h"
 #include <QTimer>
 #include "friendreqlist.h"
+#include "friendchat.h"
+#include "frienditem.h"
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
@@ -23,6 +25,7 @@ logged::logged(QWidget *parent) :
     ui(new Ui::logged)
 {
         ui->setupUi(this);
+        sharedList.clear(); // 清空 sharedList
     for (int i = 0; i < 5; i++) { // 假设显示空的占位项
              friendItem *friItem = new friendItem();
              QListWidgetItem* m_Item = new QListWidgetItem(ui->listWidget);
@@ -132,8 +135,25 @@ void logged::updateFriendList() {
         QListWidgetItem* m_Item = new QListWidgetItem(ui->listWidget);
         m_Item->setSizeHint(QSize(300, 90));
         ui->listWidget->setItemWidget(m_Item, friItem);
-        friItem->setFriendInfo(friendList[i].name, friendList[i].status);
+        char name[64] = {0}; // 初始化数组，所有元素设置为 0（即空字符串）
+        // 拼接 name
+        strcat(name, friendList[i].name);
+
+        // 如果 remark 不为空，拼接 remark
+        if (strlen(friendList[i].remark) > 0) {
+            strcat(name, "(");
+            strcat(name, friendList[i].remark);
+            strcat(name, ")");
+        }
+        friItem->setFriendInfo(name, friendList[i].status);
+        connect(friItem, &friendItem::clicked, this, [this, friItem]() {
+            // 创建并显示好友聊天界面，父对象设置为 nullptr
+            FriendChat *chatWindow = new FriendChat(this);
+            chatWindow->setWindowTitle(friItem->getName() + friItem->getOnOff()); // 设置窗口标题为好友名称
+            chatWindow->show();
+        });
     }
+
     for(int i=0;i<groupsCount;i++){
         friendItem *friItem = new friendItem();
         QListWidgetItem* m_Item = new QListWidgetItem(ui->listWidget);

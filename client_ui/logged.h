@@ -2,6 +2,7 @@
 #define LOGGED_H
 
 #include <QMainWindow>
+#include "frienditem.h"
 
 namespace Ui {
 class logged;
@@ -26,7 +27,6 @@ signals:
 private slots:
     void updateFriendList();
     void on_addfriend_clicked();
-
     void on_friendReq_clicked();
 
 private:

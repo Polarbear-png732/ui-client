@@ -192,4 +192,18 @@ void *receive_response()
     }
     return NULL;
 }
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+        // 检测当前焦点控件
+        QWidget *focusWidget = this->focusWidget();
 
+        if (focusWidget == ui->loginButton || focusWidget == ui->usernameLineEdit || focusWidget == ui->passwordLineEdit) {
+            onLoginClicked(); // 触发登录按钮的点击事件
+        } else if (focusWidget == ui->registerButton) {
+            onRegisterClicked(); // 触发注册按钮的点击事件
+        }
+    }
+
+    QMainWindow::keyPressEvent(event); // 调用基类的事件处理函数
+}

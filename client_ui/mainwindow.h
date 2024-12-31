@@ -22,6 +22,7 @@ private slots:
     void onLoginClicked();
     void onRegisterClicked();
     void handleResponse(const QVariant &data);
+    void keyPressEvent(QKeyEvent *event);
 private:
     Ui::MainWindow *ui;
 };
