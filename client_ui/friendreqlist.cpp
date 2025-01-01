@@ -11,6 +11,7 @@ FriendReqList::FriendReqList(logged *parent)
     setupUI();
     connect(friendRequestList, &QListWidget::itemClicked, this, &FriendReqList::onItemClicked);
 }
+
 FriendReqList::~FriendReqList()
 {
 

@@ -5,13 +5,10 @@ QMainWindow {
 QPushButton {
     background-color: rgb(255, 215, 195);
     border: none;
-    color: red;
-    padding: 10px 20px;
-    text-align: center;
     text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
     border-radius: 10px;
+    color: red;
+    font-size: 16px;
 }
 
 

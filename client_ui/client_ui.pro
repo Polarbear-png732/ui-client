@@ -35,7 +35,8 @@ SOURCES += \
     addfrienddialog.cpp \
     handleaddfrienddialog.cpp \
     friendreqlist.cpp \
-    friendchat.cpp
+    friendchat.cpp \
+    deletefrienddialog.cpp
 
 
 HEADERS += \
@@ -50,7 +51,8 @@ HEADERS += \
     addfrienddialog.h \
     handleaddfrienddialog.h \
     friendreqlist.h \
-    friendchat.h
+    friendchat.h \
+    deletefrienddialog.h
 
 
 FORMS += \

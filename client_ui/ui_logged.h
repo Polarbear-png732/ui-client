@@ -32,6 +32,7 @@ public:
     QLabel *headimg;
     QPushButton *addfriend;
     QPushButton *friendReq;
+    QPushButton *delfriend;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -58,6 +59,11 @@ public:
         friendReq->setObjectName(QStringLiteral("friendReq"));
         friendReq->setGeometry(QRect(0, 102, 51, 51));
         friendReq->setStyleSheet(QStringLiteral("border-image: url(:/image/friendReq.png);"));
+        delfriend = new QPushButton(centralwidget);
+        delfriend->setObjectName(QStringLiteral("delfriend"));
+        delfriend->setGeometry(QRect(0, 153, 51, 51));
+        delfriend->setStyleSheet(QLatin1String("image: url(:/image/delfriend.png);\n"
+""));
         logged->setCentralWidget(centralwidget);
         menubar = new QMenuBar(logged);
         menubar->setObjectName(QStringLiteral("menubar"));
@@ -78,6 +84,7 @@ public:
         headimg->setText(QString());
         addfriend->setText(QString());
         friendReq->setText(QString());
+        delfriend->setText(QString());
     } // retranslateUi
 
 };

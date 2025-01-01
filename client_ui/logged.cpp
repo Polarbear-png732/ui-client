@@ -15,7 +15,7 @@
 #include "frienditem.h"
 #include "sendthread.h"
 #include "messagedispatcher.h"
-
+#include "deletefrienddialog.h"
 
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
@@ -298,4 +298,12 @@ void logged::addFriend(const char* name, const char* status) {
     });
     // 设置好友信息
     newFriend->setFriendInfo(name, newStatus, "新增的好友消息...");
+}
+
+
+
+void logged::on_delfriend_clicked()
+{
+    DeleteFriendDialog dialog(this,this);  // 创建对话框
+    dialog.exec();
 }

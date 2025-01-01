@@ -8,6 +8,7 @@
 #include "responsethread.h"
 #include <QDebug>
 #include "friendchat.h"
+#include "deletefrienddialog.h"
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
@@ -65,7 +66,6 @@ int main(int argc, char *argv[])
     responseThread->start();
     MainWindow w;
     w.show();
-
 
     qDebug() << "Client FD:" << QString::number(client_fd);
 

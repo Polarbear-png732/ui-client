@@ -64,22 +64,6 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLabel" name="delfriend">
-    <property name="geometry">
-     <rect>
-      <x>60</x>
-      <y>430</y>
-      <width>31</width>
-      <height>31</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">image: url(:/image/delfriend.png);</string>
-    </property>
-    <property name="text">
-     <string/>
-    </property>
-   </widget>
    <widget class="QTextEdit" name="inputmsg">
     <property name="geometry">
      <rect>
@@ -101,7 +85,6 @@
    <zorder>inputmsg</zorder>
    <zorder>message</zorder>
    <zorder>file</zorder>
-   <zorder>delfriend</zorder>
    <zorder>sendButton</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

@@ -31,6 +31,9 @@ private slots:
     void on_addfriend_clicked();
     void on_friendReq_clicked();
 
+
+    void on_delfriend_clicked();
+
 private:
     Ui::logged *ui;
     QStringList sharedList;//用于存储好友请求列表

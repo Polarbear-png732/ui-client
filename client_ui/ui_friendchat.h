@@ -30,7 +30,6 @@ public:
     QPushButton *sendButton;
     QTextEdit *message;
     QLabel *file;
-    QLabel *delfriend;
     QTextEdit *inputmsg;
     QStatusBar *statusbar;
 
@@ -56,10 +55,6 @@ public:
         file->setObjectName(QStringLiteral("file"));
         file->setGeometry(QRect(10, 430, 31, 31));
         file->setStyleSheet(QStringLiteral("image: url(:/image/fiel.png);"));
-        delfriend = new QLabel(centralwidget);
-        delfriend->setObjectName(QStringLiteral("delfriend"));
-        delfriend->setGeometry(QRect(60, 430, 31, 31));
-        delfriend->setStyleSheet(QStringLiteral("image: url(:/image/delfriend.png);"));
         inputmsg = new QTextEdit(centralwidget);
         inputmsg->setObjectName(QStringLiteral("inputmsg"));
         inputmsg->setGeometry(QRect(0, 470, 801, 111));
@@ -69,7 +64,6 @@ public:
         inputmsg->raise();
         message->raise();
         file->raise();
-        delfriend->raise();
         sendButton->raise();
         statusbar = new QStatusBar(FriendChat);
         statusbar->setObjectName(QStringLiteral("statusbar"));
@@ -85,7 +79,6 @@ public:
         FriendChat->setWindowTitle(QApplication::translate("FriendChat", "MainWindow", Q_NULLPTR));
         sendButton->setText(QApplication::translate("FriendChat", "\345\217\221\351\200\201", Q_NULLPTR));
         file->setText(QString());
-        delfriend->setText(QString());
     } // retranslateUi
 
 };
