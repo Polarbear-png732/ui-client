@@ -1,14 +1,23 @@
 #include "frienditem.h"
-#include "ui_frienditem.h"
 #include "messagedispatcher.h"
+#include <QDebug>
+#include "ui_frienditem.h"
+
 friendItem::friendItem(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::friendItem)
+    ui(new Ui::friendItem)  // 确保正确初始化ui
 {
-    ui->setupUi(this);
-     this->setAttribute(Qt::WA_Hover); // 启用鼠标追踪
-    nameLabel = ui->nameLabel;
+    ui->setupUi(this); // 设置UI
+
+    // 启用鼠标追踪
+    this->setAttribute(Qt::WA_Hover);
+
+    // 直接访问UI控件
+    nameLabel = ui->nameLabel; // 直接从UI对象获取控件
     statusLabel = ui->onoffLabel;
+    msgLabel=ui->msgLabel;
+
+
 }
 
 friendItem::~friendItem()
@@ -21,12 +30,22 @@ void friendItem::setHeadimage(QString imgpath){
     QString styleSheet = QString("border-image: url(%1);").arg(imgpath);
     ui->headimg->setStyleSheet(styleSheet);
 }
-void friendItem::setFriendInfo(const QString &name,  const QString &status)
+
+void friendItem::setFriendInfo(const QString &name,  const QString &status,const QString &msg)
 {
     nameLabel->setText(name);
     statusLabel->setText(status);
+    msgLabel->setText(msg);
+}
+void friendItem::updateMsg(const QString &msg)
+{
+    msgLabel->setText(msg);
 }
 
+void friendItem::updateOnoff(const QString &onoff)
+{
+    statusLabel->setText(onoff);
+}
 
 void friendItem::mousePressEvent(QMouseEvent *event)
 {
@@ -37,29 +56,49 @@ void friendItem::mousePressEvent(QMouseEvent *event)
 }
 QString friendItem::getName() const
 {
-    return nameLabel->text(); // 返回 nameLabel 的文本
+    QString name = nameLabel->text(); // 获取 nameLabel 的文本
+
+    // 使用正则表达式匹配名字和备注
+    QRegularExpression regex("^(.*?)(?:\\(.*?\\))?$");
+    QRegularExpressionMatch match = regex.match(name);
+
+    if (match.hasMatch()) {
+        // 提取名字部分（括号之前的内容）
+        return match.captured(1).trimmed(); // 去除可能的空白字符
+    }
+
+    // 如果没有匹配到，直接返回原始字符串（理论上不会走到这里）
+    return name.trimmed();
 }
 QString friendItem::getOnOff() const
 {
     return statusLabel->text();
 }
 
-void MainWindow::handleResponse(const QVariant &data)
+void friendItem::handleResponse(const QVariant &data)
 {
-    QString message;
-    qDebug() << "Received QVariant data type:" << data.typeName();
-        qDebug() << "Raw data:" << data;
+    qDebug() << "friendItem::handleResponse row data" << data;
+    QString dataString = data.toString();
+    qDebug() << dataString;
+    QString friendName=this->getName();
+    qDebug() << friendName;
+    QString expectedPrefix = "私聊消息" + friendName + ":";
+    qDebug() << expectedPrefix;
 
+    QString message;
     if (data.type() == QVariant::String) {
-s
-        QString dataString = data.toString(); // Convert and save the string
-        qDebug() << "String message:" << dataString;
-        message = dataString;
+        qDebug() << "99999999999999999";
+         // Convert and save the string
+        if (dataString.startsWith(expectedPrefix)) {
+            message = dataString.mid(expectedPrefix.length());
+            qDebug() << message;
+            this->updateMsg(message);//更新消息u
+            emit MsgRecvd(message);
+            qDebug() << "emit MsgRecvd";
+        }
+
     }
 
-
-    QMessageBox::information(this, "反馈", message);
-    // ui->statusBar->showMessage(message, 5000);
 }
 
 

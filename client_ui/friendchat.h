@@ -19,8 +19,10 @@ public:
     ~FriendChat();
     QString getWindowTitle() const; // 添加获取窗口标题的方法
     QString getMessage()const;
+    void MsgRcvd(const QString msg);
 private slots:
     void on_sendButton_clicked();
+
 protected:
     void closeEvent(QCloseEvent *event); // 正确：不需要 FriendChat::
 signals:

@@ -1,6 +1,8 @@
 #include "friendchat.h"
 #include "ui_friendchat.h"
 #include "QString"
+#include "QDebug"
+#include <QShortcut>
 extern "C" {
     #include "client.h"  // C语言逻辑代码的头文件
 }
@@ -9,6 +11,7 @@ FriendChat::FriendChat(QWidget *parent) :
     ui(new Ui::FriendChat)
 {
     ui->setupUi(this);
+    ui->message->setReadOnly(true);  // 将 QTextEdit 设置为只读
     setWindowFlags(windowFlags() & ~Qt::WindowMaximizeButtonHint & ~Qt::WindowMinimizeButtonHint);
 }
 
@@ -55,4 +58,22 @@ void FriendChat::on_sendButton_clicked()
     strcpy(request->receiver_username,name.toStdString().c_str());
     strcpy(request->message,message.toStdString().c_str());
     emit  requestToSend(request);
+    ui->inputmsg->clear();  // 清除 iputmsg 中的所有内容
+
+    QString formattedMessage = QString(
+        "<div style='margin: 10px; color: blue;'>"
+        "<strong></strong> %1"
+        "</div>"
+    ).arg(message);
+       // 将消息追加到聊天框
+       ui->message->append(formattedMessage);
+}
+
+void FriendChat::MsgRcvd(const QString msg){
+    QString formattedMsg = QString(
+        "<div style='margin: 10px; color: green;'>"
+        "<strong></strong> %1"
+        "</div>"
+    ).arg(msg);
+    ui->message->append(formattedMsg);
 }

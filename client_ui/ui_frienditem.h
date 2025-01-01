@@ -25,6 +25,7 @@ public:
     QLabel *headimg;
     QLabel *nameLabel;
     QLabel *onoffLabel;
+    QLabel *msgLabel;
 
     void setupUi(QWidget *friendItem)
     {
@@ -54,6 +55,9 @@ public:
         onoffLabel->setObjectName(QStringLiteral("onoffLabel"));
         onoffLabel->setGeometry(QRect(246, 10, 51, 20));
         onoffLabel->setStyleSheet(QStringLiteral(""));
+        msgLabel = new QLabel(friendItem);
+        msgLabel->setObjectName(QStringLiteral("msgLabel"));
+        msgLabel->setGeometry(QRect(120, 40, 171, 21));
 
         retranslateUi(friendItem);
 
@@ -64,8 +68,9 @@ public:
     {
         friendItem->setWindowTitle(QApplication::translate("friendItem", "Form", Q_NULLPTR));
         headimg->setText(QString());
-        nameLabel->setText(QApplication::translate("friendItem", "name", Q_NULLPTR));
+        nameLabel->setText(QString());
         onoffLabel->setText(QString());
+        msgLabel->setText(QString());
     } // retranslateUi
 
 };

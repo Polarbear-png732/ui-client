@@ -81,20 +81,15 @@ void MainWindow::onRegisterClicked()
 void MainWindow::handleResponse(const QVariant &data)
 {
     QString message;
-    qDebug() << "Received QVariant data type:" << data.typeName();
-        qDebug() << "Raw data:" << data;
-
     if (data.type() == QVariant::String) {
         QString dataString = data.toString(); // Convert and save the string
-        qDebug() << "String message:" << dataString;
         message = dataString;
     }
     else{
             unsigned int dataUInt = data.toUInt();
-            qDebug() << "Received unsigned int value:" << dataUInt;
+
             if (dataUInt == 10021) {
                 disconnect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, this, &MainWindow::handleResponse);
-                qDebug() << "Logged started!";
                 this->hide();
                 logged *friendlist = new logged(this);                    //登录后的窗口
                 friendlist->setAttribute(Qt::WA_DeleteOnClose);
@@ -104,12 +99,8 @@ void MainWindow::handleResponse(const QVariant &data)
                 pthread_cond_signal(&cond);      //窗口切换成功，发送激发条件变量，让接收进程发送相关多消息过来
             return;
             }
-
             message = QString::number(dataUInt);
         }
-
-    QMessageBox::information(this, "反馈", message);
-    // ui->statusBar->showMessage(message, 5000);
 }
 
 
@@ -178,12 +169,12 @@ void *receive_response()
         {
             FeedbackMessage *message = (FeedbackMessage *)buffer;
             QString message_1 = QString::fromUtf8(message->message);
-            qDebug() << "message:" << message_1;
             pthread_mutex_lock(&mutex);
             if(i==0){
             pthread_cond_wait(&cond, &mutex);
             i++;
             }
+            qDebug() << "response thread " << message_1;
             MessageDispatcher::instance().dispatchMessage(message_1);
             pthread_mutex_unlock(&mutex);
             break;
@@ -192,18 +183,4 @@ void *receive_response()
     }
     return NULL;
 }
-void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-    if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
-        // 检测当前焦点控件
-        QWidget *focusWidget = this->focusWidget();
 
-        if (focusWidget == ui->loginButton || focusWidget == ui->usernameLineEdit || focusWidget == ui->passwordLineEdit) {
-            onLoginClicked(); // 触发登录按钮的点击事件
-        } else if (focusWidget == ui->registerButton) {
-            onRegisterClicked(); // 触发注册按钮的点击事件
-        }
-    }
-
-    QMainWindow::keyPressEvent(event); // 调用基类的事件处理函数
-}

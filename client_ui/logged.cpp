@@ -14,6 +14,9 @@
 #include "friendchat.h"
 #include "frienditem.h"
 #include "sendthread.h"
+#include "messagedispatcher.h"
+
+
 extern "C" {
     #include "client.h" // 这是你C语言逻辑代码的头文件
 }
@@ -69,10 +72,6 @@ void logged::closeEvent(QCloseEvent *event)
 
 void logged::handleResponse(const QVariant &data)
 {
-//    qDebug() << "Received data type:" << data.typeName();
-
-//    // 打印原始数据
-//    qDebug() << "Raw data:" << data;
 
     if (data.type() == QVariant::String) {
         qDebug() << "QString type:" << data;
@@ -104,13 +103,11 @@ void logged::handleResponse(const QVariant &data)
                     "    font-size: 14px;"
                     "}");
                 popupLabel->setAlignment(Qt::AlignCenter);
-                // 设置大小和位置
                 popupLabel->setFixedSize(200, 50);
                 popupLabel->move((width() - popupLabel->width()) / 2, 50);
                 popupLabel->setWindowFlags(Qt::ToolTip); // 确保消息始终在最前端
                 popupLabel->show();
                 QTimer::singleShot(2000, popupLabel, &QLabel::deleteLater);
-                this->printSharedList();
         }
       }
     else if (data.canConvert<unsigned int>()) {
@@ -126,7 +123,6 @@ void logged::handleResponse(const QVariant &data)
         qDebug() << "Other data type received";
         QMessageBox::information(this, "反馈", "未知数据类型");
     }
-    pthread_cond_signal(&loggedui_cond);
 }
 
 
@@ -136,7 +132,10 @@ void logged::updateFriendList() {
         friendItem *friItem = new friendItem();
         QListWidgetItem* m_Item = new QListWidgetItem(ui->listWidget);
         m_Item->setSizeHint(QSize(300, 90));
-        connect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, friItem, &friItem::handleResponse);
+
+        connect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, friItem, &friendItem::handleResponse);
+        //连接消息分发器,每个列表都收消息，但不是自己的消息即跳过，不处理
+
         ui->listWidget->setItemWidget(m_Item, friItem);
         char name[64] = {0}; // 初始化数组，所有元素设置为 0（即空字符串）
         // 拼接 name
@@ -150,13 +149,15 @@ void logged::updateFriendList() {
         }
         char onoff[40];
         snprintf(onoff,sizeof(onoff),"(%s)",friendList[i].status);
-        friItem->setFriendInfo(name, onoff);
+        QString message="暂时没有消息...";
+        friItem->setFriendInfo(name, onoff,message);
         connect(friItem, &friendItem::clicked, this, [this, friItem]() {
             // 创建并显示好友聊天界面，父对象设置为 nullptr
             FriendChat *chatWindow = new FriendChat(this);
             chatWindow->setWindowTitle(friItem->getName() +friItem->getOnOff()); // 设置窗口标题为好友名称
             chatWindow->show();
-            connect(chatWindow, &FriendChat::requestToSend, sendThread, &SendThread::sendRequest);//设置发送消息的信号绑定到发送线程的函数
+            connect(friItem,&friendItem::MsgRecvd,chatWindow,&FriendChat::MsgRcvd);
+            connect(chatWindow, &FriendChat::requestToSend, sendThread, &SendThread::sendRequest);//设置发送消息的信号绑定到发送线程的函数d
         });
     }
 
@@ -165,7 +166,8 @@ void logged::updateFriendList() {
         QListWidgetItem* m_Item = new QListWidgetItem(ui->listWidget);
         m_Item->setSizeHint(QSize(300, 90));
         ui->listWidget->setItemWidget(m_Item, friItem);
-        friItem->setFriendInfo(groups[i].name, QString::number(groups[i].memberCount));
+         QString message="暂时没有消息...";
+        friItem->setFriendInfo(groups[i].name, QString::number(groups[i].memberCount),message);
     }
 }
 

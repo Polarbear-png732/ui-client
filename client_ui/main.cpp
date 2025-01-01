@@ -17,9 +17,6 @@ SendThread* sendThread=nullptr;
 pthread_mutex_t mutex;
 pthread_cond_t cond;
 
-pthread_mutex_t loggedui_mutex;
-pthread_cond_t loggedui_cond;
-
 FriendInfo friendList[MAX_FRIENDS]={0};
 int friendCount = 0;
 GroupInfo groups[MAX_FRIENDS]={0};
@@ -60,19 +57,15 @@ int main(int argc, char *argv[])
         file.close();
     }
 
-//    FriendChat f;
-//    f.show();
-
     pthread_mutex_init(&mutex, NULL);
     pthread_cond_init(&cond, NULL);
-    pthread_mutex_init(&loggedui_mutex, NULL);
-    pthread_cond_init(&loggedui_cond, NULL);
     sendThread = new SendThread(&a);
     sendThread->start();
     responseThread = new ResponseThread(&a); // 父对象是 QCoreApplication
     responseThread->start();
     MainWindow w;
     w.show();
+
 
     qDebug() << "Client FD:" << QString::number(client_fd);
 
