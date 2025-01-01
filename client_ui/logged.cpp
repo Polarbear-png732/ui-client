@@ -114,9 +114,6 @@ void logged::handleResponse(const QVariant &data)
         // 如果数据可以转换为 unsigned int
         unsigned int dataUInt = data.toUInt();
         qDebug() << "Received unsigned int value:" << dataUInt;
-
-        // 显示消息框
-        QMessageBox::information(this, "反馈", QString::number(dataUInt));
     }
     else {
         // 处理其他数据类型
@@ -152,8 +149,9 @@ void logged::updateFriendList() {
         QString message="暂时没有消息...";
         friItem->setFriendInfo(name, onoff,message);
         connect(friItem, &friendItem::clicked, this, [this, friItem]() {
-            // 创建并显示好友聊天界面，父对象设置为 nullptr
-            FriendChat *chatWindow = new FriendChat(this);
+
+//          FriendChat *chatWindow = new FriendChat(this);
+            FriendChat *chatWindow = new FriendChat(friItem, friItem);
             chatWindow->setWindowTitle(friItem->getName() +friItem->getOnOff()); // 设置窗口标题为好友名称
             chatWindow->show();
             connect(friItem,&friendItem::MsgRecvd,chatWindow,&FriendChat::MsgRcvd);

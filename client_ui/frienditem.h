@@ -23,6 +23,10 @@ public:
     QString getName() const; // 添加获取名称的方法
     QString getOnOff() const; // 添加获取名称的方法
     void handleResponse(const QVariant &data);
+    void addReceivedMessage(const QString &message); // 添加接收消息
+    void addSentMessage(const QString &message);     // 添加发送消息
+    // 获取消息记录
+    QStringList getMessageHistory() const;
 protected:
     void mousePressEvent(QMouseEvent *event) override; // 重写鼠标点击事件
 signals:
@@ -34,6 +38,7 @@ private:
     QLabel *statusLabel;
     QLabel *msgLabel;
     QString message;
+    QStringList messageHistory;  // 消息记录
 };
 
 #endif // FRIENDITEM_H

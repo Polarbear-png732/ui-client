@@ -77,28 +77,40 @@ QString friendItem::getOnOff() const
 
 void friendItem::handleResponse(const QVariant &data)
 {
-    qDebug() << "friendItem::handleResponse row data" << data;
     QString dataString = data.toString();
-    qDebug() << dataString;
     QString friendName=this->getName();
-    qDebug() << friendName;
-    QString expectedPrefix = "私聊消息" + friendName + ":";
-    qDebug() << expectedPrefix;
-
     QString message;
+    QString expectedPrefix = "私聊消息" + friendName + ":";
     if (data.type() == QVariant::String) {
-        qDebug() << "99999999999999999";
          // Convert and save the string
         if (dataString.startsWith(expectedPrefix)) {
             message = dataString.mid(expectedPrefix.length());
             qDebug() << message;
-            this->updateMsg(message);//更新消息u
+            this->updateMsg(message);
             emit MsgRecvd(message);
-            qDebug() << "emit MsgRecvd";
+            // 判断是否有子对象
+             if (this->children().isEmpty()) {
+                this->addReceivedMessage(message);
+             }
         }
-
     }
+}
 
+void friendItem::addReceivedMessage(const QString &message)
+{
+    QString formattedMessage = QString("接收: %1").arg(message);
+    messageHistory.append(formattedMessage);
+}
+
+void friendItem::addSentMessage(const QString &message)
+{
+    QString formattedMessage = QString("发送: %1").arg(message);
+    messageHistory.append(formattedMessage);
+}
+
+QStringList friendItem::getMessageHistory() const
+{
+    return messageHistory;
 }
 
 
