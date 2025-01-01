@@ -86,6 +86,35 @@ void logged::handleResponse(const QVariant &data)
         else if(strncmp(message, "群聊", 6) == 0){
             parseGroupInfo(message,groups,&groupsCount);
         }
+        else if(strncmp(message,"添加成功",12)==0){
+             char name[32] = {0}; // 用于存储好友名字
+             char onoff[8] = {0}; // 用于存储在线状态
+
+            // 查找名字部分的起始位置（"添加成功"后）
+               const char *nameStart = message + 12; // 跳过 "添加成功" 的部分
+               // 查找在线状态部分的起始位置（"不在线" 或 "在线"）
+               const char *statusStart = strstr(nameStart, "在线");
+               if (!statusStart) {
+                   statusStart = strstr(nameStart, "不在线");
+               }
+               if (statusStart) {
+                   // 提取名字部分
+                   size_t nameLength = statusStart - nameStart;
+                   strncpy(name, nameStart, nameLength);
+                   name[nameLength] = '\0'; // 确保名字字符串以 null 结尾
+
+                   // 根据状态赋值
+                   if (strncmp(statusStart, "在线", 6) == 0) {
+                       strcpy(onoff, "online");
+                   } else if (strncmp(statusStart, "不在线", 12) == 0) {
+                       strcpy(onoff, "offline");
+                   }
+                this->addFriend(name,onoff);
+               }
+
+                qDebug() << "Name:" <<name;
+                qDebug() << "Status:" <<onoff;
+        }
         else{
             this->updateSharedList(dataString);
             this->updateSharedList(dataString);
@@ -231,4 +260,42 @@ QStringList logged::getSharedList()
 
     // 返回列表
     return sharedList;
+}
+
+
+void logged::removeFriend(const char* name) {
+    for (int i = 0; i < ui->listWidget->count(); ++i) {
+        QListWidgetItem* item = ui->listWidget->item(i);
+        friendItem* friItem = dynamic_cast<friendItem*>(ui->listWidget->itemWidget(item));
+
+        if (friItem && strcmp(friItem->getName().toStdString().c_str(), name) == 0) {
+            // 如果找到该好友，删除对应项
+            delete friItem;
+            delete ui->listWidget->takeItem(i);  // 同时移除 QListWidgetItem
+            return;
+        }
+    }
+    qDebug() << "未找到要删除的好友：" << name;
+}
+
+void logged::addFriend(const char* name, const char* status) {
+    // 创建新的好友项
+    friendItem* newFriend = new friendItem();
+    QListWidgetItem* newItem = new QListWidgetItem(ui->listWidget);
+    newItem->setSizeHint(QSize(300, 90));
+    ui->listWidget->setItemWidget(newItem, newFriend);
+    connect(&MessageDispatcher::instance(), &MessageDispatcher::messageReceived, newFriend, &friendItem::handleResponse);
+    // 设置好友状态
+    QString newStatus = QString("(%1)").arg(status);
+    connect(newFriend, &friendItem::clicked, this, [this, newFriend]() {
+
+//        FriendChat *chatWindow = new FriendChat(this);
+        FriendChat *chatWindow = new FriendChat(newFriend, newFriend);
+        chatWindow->setWindowTitle(newFriend->getName() +newFriend->getOnOff()); // 设置窗口标题为好友名称
+        chatWindow->show();
+        connect(newFriend,&friendItem::MsgRecvd,chatWindow,&FriendChat::MsgRcvd);
+        connect(chatWindow, &FriendChat::requestToSend, sendThread, &SendThread::sendRequest);//设置发送消息的信号绑定到发送线程的函数d
+    });
+    // 设置好友信息
+    newFriend->setFriendInfo(name, newStatus, "新增的好友消息...");
 }

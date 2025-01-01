@@ -57,7 +57,11 @@ public:
         onoffLabel->setStyleSheet(QStringLiteral(""));
         msgLabel = new QLabel(friendItem);
         msgLabel->setObjectName(QStringLiteral("msgLabel"));
-        msgLabel->setGeometry(QRect(120, 40, 171, 21));
+        msgLabel->setGeometry(QRect(100, 40, 211, 31));
+        QFont font1;
+        font1.setPointSize(14);
+        msgLabel->setFont(font1);
+        msgLabel->setStyleSheet(QStringLiteral(""));
 
         retranslateUi(friendItem);
 

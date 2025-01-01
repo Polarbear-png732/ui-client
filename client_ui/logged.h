@@ -20,6 +20,8 @@ public:
     void removeSharedItem(const QString &valueToRemove);
     void printSharedList();
     QStringList getSharedList();
+    void removeFriend(const char* name);
+    void addFriend(const char* name, const char* status);
 protected:
     void closeEvent(QCloseEvent *event) override; // 处理关闭事件
 signals:

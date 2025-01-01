@@ -71,6 +71,8 @@ void HandleFriendDialog::acceptFriendRequest() {
     qDebug() << "Session Token:" << request->session_token;
     qDebug() << "Friend Username:" << request->friend_username;
     emit requestToSend(request);
+    // 接受好友请求后，两边都要添加对方到好友列表中, 这通过logged窗口等待服务器消息，收到添加好友成功的消息就更新列表实现
+
     // 关闭对话框
     accept();
 }

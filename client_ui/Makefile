@@ -449,12 +449,14 @@ moc_responsethread.cpp: client.h \
 	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/polarbear/桌面/git_ui/client_ui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include responsethread.h -o moc_responsethread.cpp
 
 moc_logged.cpp: frienditem.h \
+		ui_frienditem.h \
 		logged.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/polarbear/桌面/git_ui/client_ui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include logged.h -o moc_logged.cpp
 
-moc_frienditem.cpp: frienditem.h \
+moc_frienditem.cpp: ui_frienditem.h \
+		frienditem.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/polarbear/桌面/git_ui/client_ui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include frienditem.h -o moc_frienditem.cpp
@@ -486,12 +488,15 @@ moc_handleaddfrienddialog.cpp: sendthread.h \
 
 moc_friendreqlist.cpp: logged.h \
 		frienditem.h \
+		ui_frienditem.h \
 		friendreqlist.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include ./moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/polarbear/桌面/git_ui/client_ui -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtNetwork -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/7 -I/usr/include/x86_64-linux-gnu/c++/7 -I/usr/include/c++/7/backward -I/usr/lib/gcc/x86_64-linux-gnu/7/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/7/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include friendreqlist.h -o moc_friendreqlist.cpp
 
-moc_friendchat.cpp: client.h \
+moc_friendchat.cpp: frienditem.h \
+		ui_frienditem.h \
+		client.h \
 		friendchat.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
@@ -538,6 +543,7 @@ main.o: main.cpp mainwindow.h \
 		sendthread.h \
 		logged.h \
 		frienditem.h \
+		ui_frienditem.h \
 		friendchat.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
@@ -549,6 +555,7 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		registerwindow.h \
 		logged.h \
 		frienditem.h \
+		ui_frienditem.h \
 		messagedispatcher.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
@@ -569,6 +576,7 @@ responsethread.o: responsethread.cpp responsethread.h \
 
 logged.o: logged.cpp logged.h \
 		frienditem.h \
+		ui_frienditem.h \
 		ui_logged.h \
 		responsethread.h \
 		client.h \
@@ -602,12 +610,15 @@ handleaddfrienddialog.o: handleaddfrienddialog.cpp handleaddfrienddialog.h \
 friendreqlist.o: friendreqlist.cpp friendreqlist.h \
 		logged.h \
 		frienditem.h \
+		ui_frienditem.h \
 		handleaddfrienddialog.h \
 		sendthread.h \
 		client.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o friendreqlist.o friendreqlist.cpp
 
 friendchat.o: friendchat.cpp friendchat.h \
+		frienditem.h \
+		ui_frienditem.h \
 		client.h \
 		ui_friendchat.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o friendchat.o friendchat.cpp
